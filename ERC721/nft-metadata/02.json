@@ -1,0 +1,38 @@
+{
+  "description": "Panda's adventures. This panda lives in the Hung Chiyi Zoo in China and every day something unusual happens to her.",
+  "external_url": "https://huggingface.co/spaces/dalle-mini/dalle-mini",
+  "image": "https://gateway.pinata.cloud/ipfs/QmQChrxcA86hxiQkh2KyqMM5MyMkyYZ9qpqxTQ6Au8wjWn",
+  "name": "Panda runs away from the squid",
+  "attributes": [
+      {
+          "trait_type": "Base",
+          "value": "Panda"
+      },
+      {
+          "trait_type": "Mood", 
+          "value": "Cautious"
+        }, 
+
+        {
+          "display_type": "boost_percentage", 
+          "trait_type": "Cuteness", 
+          "value": 72
+        }, 
+
+        {
+          "display_type": "boost_percentage", 
+          "trait_type": "Dangerous", 
+          "value": 19
+        }, 
+
+        {
+          "display_type": "number", 
+          "trait_type": "Generation", 
+          "value": 1
+        },
+        {
+          "trait_type": "strangeness", 
+          "value": 6
+        }
+  ]
+}
