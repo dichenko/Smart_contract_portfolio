@@ -8,7 +8,7 @@ import "hardhat-gas-reporter";
 import "solidity-coverage";
 import "@nomiclabs/hardhat-etherscan";
 
-//import './tasks/create-pool.ts'
+import './tasks/panda-nft-tasks.ts'
 
 
 
