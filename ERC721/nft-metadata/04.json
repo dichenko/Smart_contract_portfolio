@@ -1,8 +1,8 @@
 {
   "description": "Panda's adventures. This panda lives in the Hung Chiyi Zoo in China and every day something unusual happens to her.",
   "external_url": "https://huggingface.co/spaces/dalle-mini/dalle-mini",
-  "image": "https://gateway.pinata.cloud/ipfs/QmSD3jfBgBCdwLSB7FSy4aKXsy185MRbsAfsik8wLGmoWf/02_panda_runs_away_from_the_squid.png",
-  "name": "Panda runs away from the squid",
+  "image": "https://gateway.pinata.cloud/ipfs/QmSD3jfBgBCdwLSB7FSy4aKXsy185MRbsAfsik8wLGmoWf/04_panda_wins_an_oscar.png",
+  "name": "Panda wins an Oscar",
   "attributes": [
       {
           "trait_type": "Base",
@@ -10,19 +10,19 @@
       },
       {
           "trait_type": "Mood", 
-          "value": "Cautious"
+          "value": "triumphant"
         }, 
 
         {
           "display_type": "boost_percentage", 
           "trait_type": "Cuteness", 
-          "value": 72
+          "value": 34
         }, 
 
         {
           "display_type": "boost_percentage", 
           "trait_type": "Dangerous", 
-          "value": 19
+          "value": 0
         }, 
 
         {
@@ -32,7 +32,7 @@
         },
         {
           "trait_type": "strangeness", 
-          "value": 6
+          "value": 23
         }
   ]
 }

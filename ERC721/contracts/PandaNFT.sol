@@ -14,7 +14,7 @@ contract PandaNFT is ERC721Enumerable, Ownable {
     // Optional mapping for token URIs
     mapping(uint256 => string) private _tokenURIs;
 
-    function mint(address owner, string memory tokenURI)
+    function mint(address recipient, string memory _tokenURI)
         public
         onlyOwner
         returns (uint256)
@@ -22,8 +22,8 @@ contract PandaNFT is ERC721Enumerable, Ownable {
         _tokenIds.increment();
 
         uint256 newItemId = _tokenIds.current();
-        _mint(owner, newItemId);
-        _setTokenURI(newItemId, tokenURI);
+        _mint(recipient, newItemId);
+        _setTokenURI(newItemId, _tokenURI);
 
         return newItemId;
     }
@@ -37,12 +37,16 @@ contract PandaNFT is ERC721Enumerable, Ownable {
      */
     function _setTokenURI(uint256 tokenId, string memory _tokenURI)
         internal
-        virtual
     {
-        require(
-            _exists(tokenId),
-            "ERC721URIStorage: URI set of nonexistent token"
-        );
         _tokenURIs[tokenId] = _tokenURI;
+    }
+
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        override
+        returns (string memory)
+    {
+        return _tokenURIs[tokenId];
     }
 }
