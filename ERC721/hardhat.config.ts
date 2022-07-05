@@ -9,11 +9,11 @@ import "solidity-coverage";
 import "@nomiclabs/hardhat-etherscan";
 
 //import './tasks/create-pool.ts'
-//import './tasks/staking-tasks.ts'
+
 
 
 const config: HardhatUserConfig = {
-  solidity: {compilers: [{version: "0.8.15"},{version: "0.6.6"}]},
+  solidity: {compilers: [{version: "0.8.15"}]},
 
   networks: {
     rinkeby: {
