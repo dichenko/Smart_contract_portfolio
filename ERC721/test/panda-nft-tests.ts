@@ -48,12 +48,12 @@ describe("PandaNFT", function () {
       expect(await pandaNft.ownerOf(1)).to.equal(user1.address);
     });
 
-    // it("Should safe transfer properly", async function () {
-    //   await pandaNft.mint(owner.address, process.env.URI01);
-    //   await pandaNft.safeTransferFrom(owner.address, user1.address, 1);
-    //   expect(await pandaNft.balanceOf(user1.address)).to.equal(1);
-    //   expect(await pandaNft.ownerOf(1)).to.equal(user1.address);
-    // });
+    it("Should safe transfer properly", async function () {
+      await pandaNft.mint(owner.address, process.env.URI01);
+      await pandaNft["safeTransferFrom(address,address,uint256)"](owner.address, user1.address, 1);
+      expect(await pandaNft.balanceOf(user1.address)).to.equal(1);
+      expect(await pandaNft.ownerOf(1)).to.equal(user1.address);
+    });
 
     // it("Should safe transfer2 properly", async function () {
     //   await pandaNft.mint(owner.address, process.env.URI01);
