@@ -13,9 +13,9 @@
 - Все предусмотренные стандартами ERC-1155 функции
 - Все данные NFT должны отображаться на opensea
 
-Ссылки
-https://eips.ethereum.org/EIPS/eip-721
-https://eips.ethereum.org/EIPS/eip-1155
-https://opensea.io/
-https://docs.opensea.io/docs/metadata-standards
-https://docs.ipfs.io/
+
+## Links
+
+[Contract deployed and verified in Rinkeby network](https://testnets.opensea.io/collection/back-to-uusr)
+
+[Check out my NFT in OpenSea](https://rinkeby.etherscan.io/address/0x0089528e358d1667ef3766f64b0db6b43c55f077)

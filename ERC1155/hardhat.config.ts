@@ -8,7 +8,7 @@ import "hardhat-gas-reporter";
 import "solidity-coverage";
 import "@nomiclabs/hardhat-etherscan";
 
-import 'myerc1155-mint.ts'
+import './tasks/myerc1155-mint.ts'
 
 
 
