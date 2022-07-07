@@ -1,0 +1,23 @@
+{
+    "description": "Back to USSR",
+    "image": "https://gateway.pinata.cloud/ipfs/QmcDpK71x4QKcb8hU6f88B3w1mxKD51qEjZ6agfekkJVJG",
+    "name": "Moskvitch stamps",
+    "attributes": [
+        {
+            "trait_type": "Base",
+            "value": "Car"
+        },
+  
+          {
+            "display_type": "boost_percentage", 
+            "trait_type": "caloricity ", 
+            "value": 0
+          }, 
+  
+          {
+            "display_type": "boost_percentage", 
+            "trait_type": "usefulness", 
+            "value": 100
+          }
+    ]
+  }

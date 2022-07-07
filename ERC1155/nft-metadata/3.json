@@ -1,0 +1,23 @@
+{
+    "description": "Back to USSR",
+    "image": "https://gateway.pinata.cloud/ipfs/QmUj4MnM8tDFX3DPBbH2xS5KnkuPNt72se6uN5arvS6eYH",
+    "name": "Salt stamps",
+    "attributes": [
+        {
+            "trait_type": "Base",
+            "value": "Salt"
+        },
+  
+          {
+            "display_type": "boost_percentage", 
+            "trait_type": "caloricity ", 
+            "value": 0
+          }, 
+  
+          {
+            "display_type": "boost_percentage", 
+            "trait_type": "usefulness", 
+            "value": 10
+          }
+    ]
+  }

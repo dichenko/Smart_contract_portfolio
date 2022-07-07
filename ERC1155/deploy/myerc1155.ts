@@ -1,18 +1,17 @@
-import { expect } from "chai";
 import { ethers } from "hardhat";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { Contract } from "ethers";
 
 async function main() {
-  let pandaNft: Contract;
+  let myERC1155: Contract;
   let owner: SignerWithAddress;
 
   [owner] = await ethers.getSigners();
-  const PandaNftFactory = await ethers.getContractFactory("PandaNFT");
-  pandaNft = await PandaNftFactory.deploy();
-  pandaNft.deployed();
+  const NftFactory = await ethers.getContractFactory("MyERC1155");
+  myERC1155 = await NftFactory.deploy();
+  myERC1155.deployed();
 
-  console.log("NFT deployed to:", pandaNft.address);
+  console.log("NFT deployed to:", myERC1155.address);
 }
 
 main()

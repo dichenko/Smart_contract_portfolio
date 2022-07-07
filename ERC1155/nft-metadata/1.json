@@ -1,0 +1,23 @@
+{
+    "description": "Back to USSR",
+    "image": "https://gateway.pinata.cloud/ipfs/QmZNhJfKp7tZRGmAZXdnH8HbBAvEZ1WZZpHcXjr7dmuzmq",
+    "name": "Soap stamps",
+    "attributes": [
+        {
+            "trait_type": "Base",
+            "value": "Soap"
+        },
+  
+          {
+            "display_type": "boost_percentage", 
+            "trait_type": "caloricity ", 
+            "value": 0
+          }, 
+  
+          {
+            "display_type": "boost_percentage", 
+            "trait_type": "usefulness", 
+            "value": 10
+          }
+    ]
+  }
