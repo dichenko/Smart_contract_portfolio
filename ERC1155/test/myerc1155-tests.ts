@@ -86,12 +86,14 @@ describe("myERC1155", function () {
         [owner.address, owner.address, owner.address],
         [1, 2, 3]
       );
-      // expect(await myERC1155.balanceOfBatch([user1.address,user1.address,user1.address], [1,2,3]))
-      // .to.equal([BigNumber.from("100"),BigNumber.from("100"),BigNumber.from("100")]);
+      
+      expect(await myERC1155.balanceOfBatch([user1.address,user1.address,user1.address], [1,2,3]))
+      .to.eql([BigNumber.from("100"),BigNumber.from("100"),BigNumber.from("100")]);
       expect(balancesAfter[0]).to.equal(balancesBefore[0].sub(100));
       expect(balancesAfter[1]).to.equal(balancesBefore[1].sub(100));
       expect(balancesAfter[2]).to.equal(balancesBefore[2].sub(100));
     });
+
 
     it("Should transferFrom only after allowance", async function () {
       await expect(
