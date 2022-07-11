@@ -145,14 +145,26 @@ contract Marketplace is AccessControl {
         require(itemsForSale[item], "Nothing to buy");
         erc20.transferFrom(msg.sender, _seller, _price);
 
-        if (_nftStandart == 721){
-        nft721.safeTransferFrom(address(this), msg.sender, _id);
-        }
-        else{
-            nft1155.safeTransferFrom(address(this), msg.sender, _id, _amount, '');
+        if (_nftStandart == 721) {
+            nft721.safeTransferFrom(address(this), msg.sender, _id);
+        } else {
+            nft1155.safeTransferFrom(
+                address(this),
+                msg.sender,
+                _id,
+                _amount,
+                ""
+            );
         }
         itemsForSale[item] = false;
-        emit ItemPurchased(msg.sender, _seller, _nftStandart, _id, _amount, _price);
+        emit ItemPurchased(
+            msg.sender,
+            _seller,
+            _nftStandart,
+            _id,
+            _amount,
+            _price
+        );
     }
 
     ///@notice Allow creator to mint new 721 NFT
