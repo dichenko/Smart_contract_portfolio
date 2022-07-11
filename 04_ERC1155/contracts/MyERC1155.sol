@@ -6,8 +6,8 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 
 contract MyERC1155 is ERC1155, Ownable, ERC1155Supply {
-    string public name = "Back to UUSR";
-    string public symbol = "BTUUSR";
+    string public name = "Back to USSR";
+    string public symbol = "BTUSSR";
 
     uint256 public constant SOAP = 1;
     uint256 public constant TEA = 2;
