@@ -8,12 +8,13 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 contract MyERC721 is ERC721Enumerable, AccessControl {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
-    bytes32 public constant ADMIN = keccak256(abi.encodePacked("ADMIN"));
+  
     bytes32 public constant CREATOR = keccak256(abi.encodePacked("CREATOR"));
 
-    constructor(address _creator) ERC721("MarketplaceNFT", "MPNFT") {
-        _grantRole(ADMIN, msg.sender);
-        _grantRole(CREATOR, _creator);
+    constructor() ERC721("MarketplaceNFT", "MPNFT") {
+        
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        
     }
 
     // Optional mapping for token URIs

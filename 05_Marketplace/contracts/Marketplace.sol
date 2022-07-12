@@ -2,15 +2,37 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
 import "./interfaces/IERC721Mintable.sol";
 import "./interfaces/IERC1155Mintable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-contract Marketplace is AccessControl {
+contract Marketplace is AccessControl, IERC1155Receiver {
     IERC20 erc20;
     IERC721Mintable nft721;
     IERC1155Mintable nft1155;
 
+    //NFT-auction
+    uint public auctionDuration = 3 days;
+    uint public minBidCounter = 2;
+
+    struct AuctionItem {
+        bool ended;
+        uint16 nftStandart;
+        uint96 startTime;
+        address seller;
+        address highestBidder;
+        uint nftId;
+        uint amount;
+        uint initPrice;
+        uint highestBid;
+    }
+    AuctionItem[] public auctionItems;
+
+    //mapping for the NFT-store
+    mapping(bytes32 => bool) itemsForSale;
+
+    //Roles
     bytes32 public constant ADMIN = keccak256(abi.encodePacked("ADMIN"));
     bytes32 public constant CREATOR = keccak256(abi.encodePacked("CREATOR"));
 
@@ -36,6 +58,15 @@ contract Marketplace is AccessControl {
         uint amount,
         uint price
     );
+    event AuctionItemListed(
+        uint itemIndex,
+        uint nftStandart,
+        uint id,
+        uint amount,
+        uint initPrice,
+        address seller
+    );
+    event Bid(uint _id, uint _bid, address bidder);
 
     constructor(
         address _erc20,
@@ -50,20 +81,6 @@ contract Marketplace is AccessControl {
         nft721 = IERC721Mintable(_nft721);
         nft1155 = IERC1155Mintable(_nft1155);
     }
-
-    // ///@dev struct for listed nft
-    // struct ItemToSale {
-    //     uint16 nftStandart; //721 - ERC721, 1151 - ERC1151
-    //     address seller;
-    //     uint id;
-    //     uint amount;
-    //     uint price;
-    // }
-
-    // ///@dev array to store nftToSale structs
-    // ItemToSale[] public itemsToSale;
-
-    mapping(bytes32 => bool) itemsForSale;
 
     ///@notice list nft in Marketplace
     function listItem(
@@ -183,5 +200,118 @@ contract Marketplace is AccessControl {
         bytes memory data
     ) external onlyRole(CREATOR) {
         nft1155.mint(account, id, amount, data);
+    }
+
+    //@notice listed item on auction
+    function listItemOnAuction(
+        uint16 _nftStandart,
+        uint _id,
+        uint _amount,
+        uint _initPrice
+    ) external {
+        require(
+            _nftStandart == 721 || _nftStandart == 1155,
+            "Invalid standart"
+        );
+        if (_nftStandart == 721) {
+            require(nft721.ownerOf(_id) == msg.sender, "Not NFT owner");
+            nft721.transferFrom(msg.sender, address(this), _id);
+        } else {
+            require(
+                nft1155.balanceOf(msg.sender, _id) >= _amount,
+                "Not enough tokens"
+            );
+            nft1155.safeTransferFrom(
+                msg.sender,
+                address(this),
+                _id,
+                _amount,
+                ""
+            );
+        }
+
+        auctionItems.push(
+            AuctionItem(
+                false,
+                _nftStandart,
+                uint96(block.timestamp),
+                msg.sender,
+                address(0),
+                _id,
+                _amount,
+                _initPrice,
+                _initPrice
+            )
+        );
+
+        uint itemIndex = auctionItems.length - 1;
+
+        emit AuctionItemListed(
+            itemIndex,
+            _nftStandart,
+            _id,
+            _amount,
+            _initPrice,
+            msg.sender
+        );
+    }
+
+    function makeBid(uint _id, uint _bid) external{
+        require (auctionItems[_id].startTime + auctionDuration > block.timestamp, "Auction ended");
+        require (_bid > auctionItems[_id].highestBid, "Too low price");
+        erc20.transferFrom(msg.sender, address(this), _bid);
+        if (auctionItems[_id].highestBidder != address(0)){
+            erc20.transfer(auctionItems[_id].highestBidder, auctionItems[_id].highestBid);
+        }
+        auctionItems[_id].highestBidder = msg.sender;
+        auctionItems[_id].highestBid = _bid;
+
+        emit Bid(_id, _bid, msg.sender);
+    }
+
+    function finishAuction() external{}
+
+
+
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(IERC165, AccessControl)
+        returns (bool)
+    {
+        return
+            interfaceId == type(IERC1155Receiver).interfaceId ||
+            super.supportsInterface(interfaceId);
+    }
+
+    function onERC1155Received(
+        address operator,
+        address from,
+        uint256 id,
+        uint256 value,
+        bytes calldata data
+    ) external pure returns (bytes4) {
+        return
+            bytes4(
+                keccak256(
+                    "onERC1155Received(address,address,uint256,uint256,bytes)"
+                )
+            );
+    }
+
+    function onERC1155BatchReceived(
+        address operator,
+        address from,
+        uint256[] calldata ids,
+        uint256[] calldata values,
+        bytes calldata data
+    ) external pure returns (bytes4) {
+        return
+            bytes4(
+                keccak256(
+                    "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"
+                )
+            );
     }
 }

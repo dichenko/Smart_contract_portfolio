@@ -9,20 +9,20 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 contract MyERC1155 is ERC1155, ERC1155Supply, AccessControl{
     string public name = "Back to USSR";
     string public symbol = "BTUSSR";
-    bytes32 public constant ADMIN = keccak256(abi.encodePacked("ADMIN"));
+   
     bytes32 public constant CREATOR = keccak256(abi.encodePacked("CREATOR"));
 
     uint256 public constant TEST = 1;
 
-    constructor(address _creator)
+    constructor()
         ERC1155(
             "ipfs://bafybeifzevbg2cep55zeahf2euax46p3lkdfk3gtlwcyoxoyxqb66pbn7e/{id}.json"
         )
     {
         _mint(msg.sender, TEST, 1000, "");
         
-        _grantRole(ADMIN, msg.sender);
-        _grantRole(CREATOR, _creator);
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        
        
     }
 
@@ -63,5 +63,7 @@ contract MyERC1155 is ERC1155, ERC1155Supply, AccessControl{
     function supportsInterface(bytes4 interfaceId) public view override (AccessControl, ERC1155)  returns (bool) {
         return interfaceId == type(IAccessControl).interfaceId || super.supportsInterface(interfaceId);
     }
+
+   
 
 }
