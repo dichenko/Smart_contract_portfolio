@@ -7,8 +7,7 @@ import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
 import "@nomiclabs/hardhat-etherscan";
-
-//import './tasks/panda-nft-tasks.ts'
+import './tasks/mint.ts'
 
 
 

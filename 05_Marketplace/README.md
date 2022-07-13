@@ -1,13 +1,22 @@
-# Sample Hardhat Project
+### Задание:
+- Написать контракт маркетплейса, который должен включать в себя функцию создания NFT, а также функционал аукциона.
+- Написать полноценные тесты к контракту
+- Написать скрипт деплоя
+- Задеплоить в тестовую сеть
+- Написать таск на mint
+- Верифицировать контракт
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+## Требования  
+- Функция listItem() - выставка на продажу предмета.
+- Функция buyItem() - покупка предмета.
+- Функция cancel() - отмена продажи выставленного предмета
+- Функция listItemOnAuction() - выставка предмета на продажу в аукционе.
+- Функция makeBid() - сделать ставку на предмет аукциона с определенным id.
+- Функция finishAuction() - завершить аукцион и отправить НФТ победителю
 
-Try running some of the following tasks:
+Аукцион длится 3 дня с момента старта аукциона. В течении этого срока аукцион не может быть отменен. В случае если по истечению срока набирается более двух ставок аукцион считается состоявшимся и создатель аукциона его завершает (НФТ переходит к последнему биддеру и токены создателю аукциона). В противном случае токены возвращаются последнему биддеру, а НФТ остается у создателя.
 
-```shell
-npx hardhat help
-npx hardhat test
-GAS_REPORT=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.ts
-```
+
+
+
+[Contract deployed and verified in Rinkeby network](https://rinkeby.etherscan.io/address/0x087cb1b8e411cF7a9908Ac98892Fed3c47c59Cba#code)
