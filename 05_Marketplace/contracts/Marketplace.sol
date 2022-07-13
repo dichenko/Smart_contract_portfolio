@@ -14,7 +14,7 @@ contract Marketplace is AccessControl, IERC1155Receiver {
 
     //NFT-auction
     uint public auctionDuration = 3 days;
-    uint public minBidCounter = 2;
+    uint public minBidCounter = 3;
 
     struct AuctionItem {
         bool ended;
@@ -26,6 +26,7 @@ contract Marketplace is AccessControl, IERC1155Receiver {
         uint amount;
         uint initPrice;
         uint highestBid;
+        uint bidCounter;
     }
     AuctionItem[] public auctionItems;
 
@@ -240,7 +241,8 @@ contract Marketplace is AccessControl, IERC1155Receiver {
                 _id,
                 _amount,
                 _initPrice,
-                _initPrice
+                _initPrice,
+                0
             )
         );
 
@@ -256,23 +258,85 @@ contract Marketplace is AccessControl, IERC1155Receiver {
         );
     }
 
-    function makeBid(uint _id, uint _bid) external{
-        require (auctionItems[_id].startTime + auctionDuration > block.timestamp, "Auction ended");
-        require (_bid > auctionItems[_id].highestBid, "Too low price");
+    function makeBid(uint _id, uint _bid) external {
+        require(_id < auctionItems.length, "Auction does not exist");
+        require(
+            auctionItems[_id].startTime + auctionDuration > block.timestamp,
+            "Auction finished"
+        );
+        require(_bid > auctionItems[_id].highestBid, "Too low price");
         erc20.transferFrom(msg.sender, address(this), _bid);
-        if (auctionItems[_id].highestBidder != address(0)){
-            erc20.transfer(auctionItems[_id].highestBidder, auctionItems[_id].highestBid);
+        if (auctionItems[_id].highestBidder != address(0)) {
+            erc20.transfer(
+                auctionItems[_id].highestBidder,
+                auctionItems[_id].highestBid
+            );
         }
         auctionItems[_id].highestBidder = msg.sender;
         auctionItems[_id].highestBid = _bid;
+        auctionItems[_id].bidCounter += 1;
 
         emit Bid(_id, _bid, msg.sender);
     }
 
-    function finishAuction() external{}
+    function finishAuction(uint _id) external {
+        require(!auctionItems[_id].ended, "Auction already finished");
+        require(
+            auctionItems[_id].startTime + auctionDuration <= block.timestamp,
+            "Can't finish auction before duration time is up"
+        );
+        auctionItems[_id].ended = true;
+        if (auctionItems[_id].bidCounter >= minBidCounter) {
+            erc20.transfer(
+                auctionItems[_id].seller,
+                auctionItems[_id].highestBid
+            );
+            if (auctionItems[_id].nftStandart == 721) {
+                nft721.transferFrom(
+                    address(this),
+                    auctionItems[_id].highestBidder,
+                    auctionItems[_id].nftId
+                );
+            } else {
+                nft1155.safeTransferFrom(
+                    address(this),
+                    auctionItems[_id].highestBidder,
+                    auctionItems[_id].nftId,
+                    auctionItems[_id].amount,
+                    ""
+                );
+            }
+        } else {
+            erc20.transfer(
+                auctionItems[_id].highestBidder,
+                auctionItems[_id].highestBid
+            );
+            if (auctionItems[_id].nftStandart == 721) {
+                nft721.transferFrom(
+                    address(this),
+                    auctionItems[_id].seller,
+                    auctionItems[_id].nftId
+                );
+            } else {
+                nft1155.safeTransferFrom(
+                    address(this),
+                    auctionItems[_id].seller,
+                    auctionItems[_id].nftId,
+                    auctionItems[_id].amount,
+                    ""
+                );
+            }
+        }
+    }
 
-
-
+    ///@notice get info about auction item by id
+    function getAuctionItem(uint _id)
+        external
+        view
+        returns (AuctionItem memory item)
+    {
+        return auctionItems[_id];
+    }
 
     function supportsInterface(bytes4 interfaceId)
         public

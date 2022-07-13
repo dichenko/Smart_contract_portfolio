@@ -6,7 +6,7 @@ import { Contract } from "ethers";
 import * as dotenv from "dotenv";
 dotenv.config();
 
-describe("Marketplace", function () {
+describe("Marketplace-store", function () {
   let marketplace: Contract;
   let erc721: Contract;
   let erc1155: Contract;
