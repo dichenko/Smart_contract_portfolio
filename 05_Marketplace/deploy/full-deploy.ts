@@ -12,7 +12,7 @@ async function main() {
   [owner] = await ethers.getSigners();
   
   //erc20 deploy
-  const MyERC20Factory = await ethers.getContractFactory("Marketplace");
+  const MyERC20Factory = await ethers.getContractFactory("MyERC20");
   myERC20 = await MyERC20Factory.deploy("MarketplaseTokens", "MPT", 18, ethers.utils.parseEther("10000000000"));
   myERC20.deployed();
   console.log("ERC20 deployed to:", myERC20.address);
@@ -34,8 +34,6 @@ async function main() {
   marketplace = await MarketplaceFactory.deploy(myERC20.address, myERC721.address, myERC1155.address, owner.address);
   marketplace.deployed();
   console.log("Marketplace deployed to:", marketplace.address);
-
-  
 }
 
 main()
