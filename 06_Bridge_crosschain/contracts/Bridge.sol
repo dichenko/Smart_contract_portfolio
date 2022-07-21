@@ -1,10 +1,13 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
+import "@openzeppelin/contracts/access/Ownable.sol";
+
 contract Bridge {
-    IERC20 ierc20;
+    IERC20 erc20;
+    address public validator;
     mapping(address => uint) nonceCounter;
-    mapping (bytes32 => bool) finishedTransactions;
+    mapping(bytes32 => bool) finishedTransactions;
 
     event SwapInitialized(
         address initiator,
@@ -21,8 +24,9 @@ contract Bridge {
         uint nonce
     );
 
-    constructor(address _erc20Token) {
-        ierc20 = IERC20(_erc20Token);
+    constructor(address _erc20Token, address _validator) {
+        erc20 = IERC20(_erc20Token);
+        validator = _validator;
     }
 
     function swap(
@@ -30,7 +34,7 @@ contract Bridge {
         uint _chainID,
         uint _amount
     ) external {
-        ierc20.burn(msg.sender, _amount);
+        erc20.burn(msg.sender, _amount);
         emit SwapInitialized(
             msg.sender,
             _recipient,
@@ -41,9 +45,19 @@ contract Bridge {
         nonceCounter[msg.sender] += 1;
     }
 
-    function redeem() external {
+    function redeem(
+        address initiator,
+        address recipient,
+        uint amount,
+        uint nonce,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) external {
 
     }
 
-    
+    function setValidator(address _newValidator) external onlyOwner{
+        validator = _newValidator;
+    }
 }
