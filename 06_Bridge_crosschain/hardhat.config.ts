@@ -7,12 +7,12 @@ import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
 import "@nomiclabs/hardhat-etherscan";
-import './tasks/mint.ts'
+//import './tasks/mint.ts'
 
 
 
 const config: HardhatUserConfig = {
-  solidity: {compilers: [{version: "0.8.15"}]},
+  solidity: {compilers: [{version: "0.8.10"}]},
 
   networks: {
     rinkeby: {

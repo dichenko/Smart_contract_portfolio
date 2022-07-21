@@ -1,0 +1,56 @@
+import { expect } from "chai";
+import { ethers } from "hardhat";
+import { BigNumber } from "ethers";
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import { Contract } from "ethers";
+import * as dotenv from "dotenv";
+dotenv.config();
+
+describe("Bridge", function () {
+  let bridge: Contract;
+  let erc20: Contract;
+  let owner: SignerWithAddress;
+  let validator: SignerWithAddress;
+  let user1: SignerWithAddress;
+  let user2: SignerWithAddress;
+
+  beforeEach(async () => {
+    [owner, validator, user1, user2] = await ethers.getSigners();
+
+    //deploy erc20
+    const ERC20Factory = await ethers.getContractFactory("BridgeToken");
+    erc20 = await ERC20Factory.deploy();
+    erc20.deployed();
+
+    //deploy Bridge Contract
+    const BridgeFactory = await ethers.getContractFactory("Bridge");
+    bridge = await BridgeFactory.deploy(erc20.address, validator.address);
+    bridge.deployed();
+
+    //grantRoles
+    await erc20.grantRole(erc20.MINTER_ROLE(), bridge.address);
+    await erc20.grantRole(erc20.BURNER_ROLE(), bridge.address);
+    await erc20.transfer(user1.address, 100000000);
+    await erc20.transfer(user2.address, 100000000);
+    await erc20.connect(user1).approve(bridge.address, 100000000);
+    await erc20.connect(user2).approve(bridge.address, 100000000);
+
+  });
+
+  describe("Deployment", function () {
+    it("ACCESS: Only minter should mint erc20 ", async function () {
+      await expect(erc20.mint(owner.address, 1000)).to.be.revertedWith(
+        'AccessControl: account 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266 is missing role 0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6');
+    });
+
+    it("ACCESS: Only burner should burn erc20 ", async function () {
+      await expect(erc20.burn(owner.address, 100)).to.be.revertedWith(
+        'fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6');
+      
+      await expect(()=>bridge.connect(user1).swap(user2.address, 57, 100)).to.changeTokenBalance(erc20, user1, -100);
+    });
+
+
+  });
+
+});

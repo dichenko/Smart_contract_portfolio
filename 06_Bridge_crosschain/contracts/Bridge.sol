@@ -3,7 +3,15 @@ pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract Bridge {
+interface IERC20 {
+    function mint(address to, uint amount) external;
+    function burn(address to, uint amount) external;
+    function balanceOf(address account) external view returns (uint256);
+    function transfer(address to, uint256 amount) external returns (bool);
+    function approve(address spender, uint256 amount) external returns (bool);
+}
+
+contract Bridge is Ownable {
     IERC20 erc20;
     address public validator;
     mapping(address => uint) nonceCounter;
@@ -24,8 +32,8 @@ contract Bridge {
         uint nonce
     );
 
-    constructor(address _erc20Token, address _validator) {
-        erc20 = IERC20(_erc20Token);
+    constructor(address _erc20Address, address _validator) {
+        erc20 = IERC20(_erc20Address);
         validator = _validator;
     }
 
@@ -54,10 +62,24 @@ contract Bridge {
         bytes32 r,
         bytes32 s
     ) external {
-
+        bytes32 message = keccak256(
+            abi.encodePacked(initiator, recipient, amount, nonce)
+        );
+        address addr = ecrecover(hashMessage(message), v, r, s);
+        require(addr == validator, "Invalid signer");
+        require(!finishedTransactions[message], "Already redeemed");
+        require(recipient == msg.sender, "Not a recipient");
+        finishedTransactions[message] = true;
+        erc20.mint(msg.sender, amount);
+        emit RedeemFinished(initiator, recipient, amount, nonce);
     }
 
-    function setValidator(address _newValidator) external onlyOwner{
+    function setValidator(address _newValidator) external onlyOwner {
         validator = _newValidator;
+    }
+
+    function hashMessage(bytes32 message) private pure returns (bytes32) {
+        bytes memory prefix = "\x19Ethereum Signed Message:\n32";
+        return keccak256(abi.encodePacked(prefix, message));
     }
 }
