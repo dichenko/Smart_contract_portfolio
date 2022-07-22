@@ -7,7 +7,8 @@ import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
 import "@nomiclabs/hardhat-etherscan";
-//import './tasks/mint.ts'
+import './tasks/swap.ts';
+import './tasks/redeam.ts';
 
 
 

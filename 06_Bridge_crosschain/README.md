@@ -1,13 +1,26 @@
-# Sample Hardhat Project
+### Задание:
+- Написать контракт кроссчейн моста для отправки токенов стандарта ERC-20 между сетями Ethereum и Binance Smart chain.
+- Написать контракт Bridge
+- Написать полноценные тесты к контракту
+- Написать скрипт деплоя
+- Задеплоить в тестовую сеть
+- Написать таск на swap, redeem
+- Верифицировать контракт
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+## Требования  
+- Функция swap(): списывает токены с пользователя и испускает event ‘swapInitialized’
+- Функция redeem(): вызывает функцию ecrecover и восстанавливает по хэшированному сообщению и сигнатуре адрес валидатора, если адрес совпадает с адресом указанным на контракте моста то пользователю отправляются токены
 
-Try running some of the following tasks:
+## Ссылки 
+ECDSA 
+https://docs.openzeppelin.com/contracts/4.x/api/utils#ECDSA 
 
-```shell
-npx hardhat help
-npx hardhat test
-GAS_REPORT=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.ts
-```
+Signing Messages   
+https://docs.ethers.io/v4/cookbook-signing.html?highlight=signmessage 
+
+Mathematical and Cryptographic Functions
+https://docs.soliditylang.org/en/v0.8.0/units-and-global-variables.html#mathematical-and-cryptographic-functions
+
+
+
+[Contract deployed and verified in Rinkeby network](https://rinkeby.etherscan.io/address/0x05e62282bbD0d25b7baf2E7811f04d7527A6BD60#code)
