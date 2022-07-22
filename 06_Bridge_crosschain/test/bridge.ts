@@ -30,6 +30,8 @@ describe("Bridge", function () {
     //grantRoles
     await erc20.grantRole(erc20.MINTER_ROLE(), bridge.address);
     await erc20.grantRole(erc20.BURNER_ROLE(), bridge.address);
+
+    //deposit tokens for users
     await erc20.transfer(user1.address, 100000000);
     await erc20.transfer(user2.address, 100000000);
     await erc20.connect(user1).approve(bridge.address, 100000000);
@@ -44,8 +46,8 @@ describe("Bridge", function () {
     });
 
     it("ACCESS: Only burner should burn erc20 ", async function () {
-      //FIX
-      // await expect(erc20.burn(owner.address, 100)).to.be.reverted;
+      
+      await expect(erc20.burnFrom(owner.address, 100)).to.be.reverted;
 
       await expect(() => bridge.connect(user1).swap(user2.address, 57, 100)).to.changeTokenBalance(
         erc20,

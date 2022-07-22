@@ -8,7 +8,7 @@ import "hardhat-gas-reporter";
 import "solidity-coverage";
 import "@nomiclabs/hardhat-etherscan";
 import './tasks/swap.ts';
-import './tasks/redeam.ts';
+import './tasks/redeem.ts';
 
 
 

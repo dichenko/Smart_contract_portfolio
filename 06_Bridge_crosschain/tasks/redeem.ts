@@ -16,7 +16,7 @@ task("redeam", "Redeam tokens")
 
     const bridgeAddress = process.env.BRIDGE_CONTRACT_ADDRESS;
     const bridge = await hre.ethers.getContractAt("Bridge", bridgeAddress as string, owner);
-    let result = await bridge.redeam(
+    let result = await bridge.redeem(
       taskArgs.initiator,
       taskArgs.recipient,
       taskArgs.amount,

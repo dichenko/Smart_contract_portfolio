@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 interface IERC20 {
     function mint(address to, uint amount) external;
-    function burn(address to, uint amount) external;
+    function burnFrom(address account, uint amount) external;
     function balanceOf(address account) external view returns (uint256);
     function transfer(address to, uint256 amount) external returns (bool);
     function approve(address spender, uint256 amount) external returns (bool);
@@ -42,7 +42,7 @@ contract Bridge is Ownable {
         uint _chainID,
         uint _amount
     ) external {
-        erc20.burn(msg.sender, _amount);
+        erc20.burnFrom(msg.sender, _amount);
         emit SwapInitialized(
             msg.sender,
             _recipient,

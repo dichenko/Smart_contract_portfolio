@@ -18,8 +18,5 @@ contract BridgeToken is ERC20, ERC20Burnable, AccessControl {
         _mint(to, amount);
     }
 
-    function burn(address account, uint256 amount) public onlyRole(BURNER_ROLE) {
-        _burn(account, amount);
-    }
 
 }
