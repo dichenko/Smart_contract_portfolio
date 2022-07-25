@@ -20,7 +20,7 @@ contract DAO is AccessControl {
         uint startTime;
         address initiator;
         address recipient;
-        bytes32 signature;
+        bytes signature;
         uint[2] votesCounter;
     }
 
@@ -30,9 +30,10 @@ contract DAO is AccessControl {
         uint id,
         uint starttime,
         address recipient,
-        bytes32 signature
+        bytes signature
     );
     event VotingFinished(uint id, uint optionID);
+    event Voted(address voter, uint id, uint option, uint amount);
 
     constructor(address _chairman, address _erc20Address) {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
@@ -44,10 +45,14 @@ contract DAO is AccessControl {
     /// @param _recipient address of recipien contract
     /// @param _signature signature of called function
     /// @custom:emit VotingStarted event
-    function addProposal(address _recipient, bytes32 _signature)
+    function addProposal(address _recipient, bytes calldata _signature)
         external
         onlyRole(CHAIRMAN)
     {
+        bytes32 hash = keccak256(abi.encodePacked(_recipient, _signature));
+        require(!currentVotings[hash], "Proposal already added");
+        currentVotings[hash] = true;
+
         votings.push(
             Voting(
                 false,
@@ -79,11 +84,52 @@ contract DAO is AccessControl {
         depositAmount[msg.sender] += _amount;
         unlockTime[msg.sender] = block.timestamp + debatePeriod;
     }
+
     /// @notice withdraw  all deposited tokens from DAO
     function withdraw() external {
         require(depositAmount[msg.sender] > 0, "Nothind to withdraw");
         require(block.timestamp >= unlockTime[msg.sender], "Stil locked");
         erc20.transfer(msg.sender, depositAmount[msg.sender]);
         depositAmount[msg.sender] = 0;
+    }
+
+    /// @notice Deposit DAO tokens from user to DAO contract
+    /// @param _id id of voting
+    /// @param _option option pro/contra - 1/0
+    /// @custom:emit VotingFinished event
+    function vote(uint _id, uint _option) external {
+        require(
+            depositAmount[msg.sender] > 0,
+            "Need deposit tokens before vote"
+        );
+        require(_id < votings.length, "Voting doesnt exist");
+        require(!votings[_id].finished, "Voting already finished");
+        votings[_id].votesCounter[_option] += depositAmount[msg.sender];
+        emit Voted(msg.sender, _id, _option, depositAmount[msg.sender]);
+    }
+
+    /// @notice Finish voting
+    /// @param _id id of voting
+    /// @custom:emit Voted event
+    function finish(uint _id) external {
+        require(
+            block.timestamp >= votings[_id].startTime + debatePeriod,
+            "The debate period is not over yet"
+        );
+        require(!votings[_id].finished, "This voting already finished");
+        votings[_id].finished = true;
+        bytes32 hash = keccak256(
+            abi.encodePacked(votings[_id].recipient, votings[_id].signature)
+        );
+        currentVotings[hash] = false;
+        uint optionID = 0;
+        if (votings[_id].votesCounter[1] > votings[_id].votesCounter[0]) {
+            (bool success, ) = votings[_id].recipient.call{value: 0}(
+                votings[_id].signature
+            );
+            require(success, "ERROR call func");
+            optionID = 1;
+        }
+        emit VotingFinished(_id, optionID);
     }
 }
