@@ -13,7 +13,7 @@ import "@nomiclabs/hardhat-etherscan";
 
 
 const config: HardhatUserConfig = {
-  solidity: {compilers: [{version: "0.8.10"}]},
+  solidity: {compilers: [{version: "0.8.15"}]},
 
   networks: {
     rinkeby: {

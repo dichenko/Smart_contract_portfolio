@@ -2,14 +2,18 @@
 pragma solidity 0.8.15;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 
-contract Staking {
+    
+
+contract Staking is AccessControl {
+    bytes32 public constant DAO = keccak256("DAO");
 
     uint public percent = 1150;
     uint public percentDecimals = 2;
     uint public timeToLockLp = 20 minutes;
     uint public timeToLockReward = 10 minutes;
-    address public owner;
+    
 
   struct Stake {
         uint timestamp;
@@ -26,16 +30,13 @@ contract Staking {
     IERC20 rewardToken;
 
 
-    constructor(address _lpAddress, address _rewardAddress) {
-        owner = msg.sender;
+    constructor(address _lpAddress, address _rewardAddress, address _dao) {
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(DAO, _dao);
         lpToken = IERC20(_lpAddress);
         rewardToken = IERC20(_rewardAddress);
     }
 
-    modifier onlyOwner() {
-        require(msg.sender == owner, "You a not an owner!");
-        _;
-    }
 
     ///@notice Transfers LP-tokens from caller balance to staking contract balance
     ///@param _amount of LP-tokens
@@ -71,18 +72,18 @@ contract Staking {
         stakes[msg.sender].rewardAmount = 0;
     }
 
-    ///@notice Sets reward percent, onlyOwner
-    function setPercent(uint16 _percent) public onlyOwner {
+    ///@notice Sets reward percent, onlyRole(DEFAULT_ADMIN_ROLE)
+    function setPercent(uint16 _percent) public onlyRole(DEFAULT_ADMIN_ROLE) {
         percent = _percent;
     }
 
-    ///@notice Sets lock time for LP-tokens, onlyOwner
-    function setTimeToLockLp(uint _time) public onlyOwner {
+    ///@notice Sets lock time for LP-tokens, onlyRole(DEFAULT_ADMIN_ROLE)
+    function setTimeToLockLp(uint _time) public onlyRole(DEFAULT_ADMIN_ROLE) {
         timeToLockLp = _time;
     }
 
-    ///@notice Sets lock time for reward tokens, onlyOwner
-    function setTimeToLockReward(uint _time) public onlyOwner {
+    ///@notice Sets lock time for reward tokens, onlyRole(DEFAULT_ADMIN_ROLE)
+    function setTimeToLockReward(uint _time) public onlyRole(DEFAULT_ADMIN_ROLE) {
         timeToLockReward = _time;
     }
 }
