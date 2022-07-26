@@ -59,17 +59,10 @@ describe("DAO", function () {
 
     });
   });
-
-
   
   describe("Proposal", function () {
     it("Proposal should call staking method after voting", async function () {
-      await expect(dao.connect(user1).addProposal(staking.address, "0x")).to.be.revertedWith(
-        "'AccessControl: account 0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc is missing role 0x5778c2f7d924e55986d549d645f53119b71708389fc2011260c8a657c569fcaa'"
-      );
-
-      expect(await dao.connect(chairman).addProposal(staking.address, "0x")).to.emit(dao, "VotingStarted");
-
+      
     });
   });
 });

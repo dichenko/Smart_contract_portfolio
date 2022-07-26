@@ -109,7 +109,7 @@ contract DAO is AccessControl {
     }
 
     /// @notice Finish voting
-    /// @param _id id of voting
+    /// @param _id of voting
     /// @custom:emit Voted event
     function finish(uint _id) external {
         require(
