@@ -1,4 +1,4 @@
-Contract deployed and verifyed [on Rinkeby network](https://rinkeby.etherscan.io/address/0xDcE00efBf1df478792643Afdc1f823c61B097af7#code)
+
 
 ### Задание
 
@@ -19,3 +19,6 @@ Contract deployed and verifyed [on Rinkeby network](https://rinkeby.etherscan.io
 - Функция claim() - списывает с контракта стейкинга ревард токены доступные в качестве наград
 - Функция unstake() - списывает с контракта стейкинга ЛП токены доступные для вывода
 - Функции админа для изменения параметров стейкинга (время заморозки, процент)
+
+### Deploy
+Contract deployed and verifyed [on Rinkeby network](https://rinkeby.etherscan.io/address/0xDcE00efBf1df478792643Afdc1f823c61B097af7#code)

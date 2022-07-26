@@ -14,7 +14,8 @@
 - Все данные NFT должны отображаться на opensea
 
 
-## Links
+
+### Deploy
 
 [Contract deployed and verified in Rinkeby network](https://rinkeby.etherscan.io/address/0x0089528e358d1667ef3766f64b0db6b43c55f077)
 [Check out my NFT in OpenSea](https://testnets.opensea.io/collection/back-to-uusr)
