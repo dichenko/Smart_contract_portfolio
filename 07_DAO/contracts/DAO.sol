@@ -24,7 +24,7 @@ contract DAO is AccessControl {
         uint[2] votesCounter;
     }
 
-    Voting[] votings;
+    Voting[] public votings;
 
     event VotingStarted(
         uint id,
@@ -118,7 +118,9 @@ contract DAO is AccessControl {
         );
 
         require(!votings[_id].finished, "This voting already finished");
+
         votings[_id].finished = true;
+
         bytes32 hash = keccak256(
             abi.encodePacked(votings[_id].recipient, votings[_id].signature)
         );
@@ -129,9 +131,10 @@ contract DAO is AccessControl {
             votings[_id].votesCounter[0] + votings[_id].votesCounter[1] >=
             (erc20.totalSupply() * 100) / quorumPercent
         ) {
-            (bool success, ) = votings[_id].recipient.call{value: 0}(
-                votings[_id].signature
-            );
+            address recip = votings[_id].recipient;
+            bytes memory sig = votings[_id].signature;
+            
+            (bool success, ) = recip.call{value: 0}(sig);
             require(success, "ERROR call func");
             optionID = 1;
         }

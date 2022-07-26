@@ -59,16 +59,16 @@ describe("DAO", function () {
   });
 
   describe("DAO-add-finish-proposal", function () {
-    it("Proposal should call staking method after voting", async function () {
+    it("Proposal should call staking contract after voting", async function () {
       expect(await staking1.percent()).to.eq(10);
 
-      //Preparing of proposal calldata 
+      //Preparing of proposal calldata
       const iface = new ethers.utils.Interface(stakingABI);
-      const calldata = iface.encodeFunctionData("setPercent", ["20"]);
-
+      const calldata = iface.encodeFunctionData("setPercent", [20]);
+      
       //add proposal by chairman
       await dao.connect(chairman).addProposal(staking1.address, calldata);
-
+      
       //vote
       await dao.connect(user1).deposit(ethers.utils.parseEther("1"));
       await dao.connect(user1).vote(0, 1);
@@ -82,6 +82,7 @@ describe("DAO", function () {
       expect(await dao.finish(0))
         .to.emit(dao, "VotingFinished")
         .withArgs(0, 1);
+
 
       expect(await staking1.percent()).to.eq(20);
     });
