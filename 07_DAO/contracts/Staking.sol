@@ -9,9 +9,9 @@ contract Staking is AccessControl {
     uint public percent = 1150;
     uint public percentDecimals = 2;
 
-    constructor(address _dao) {
+    constructor() {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _grantRole(DAO, _dao);
+        
     }
 
     ///@notice Sets reward percent, onlyRole(DEFAULT_ADMIN_ROLE)

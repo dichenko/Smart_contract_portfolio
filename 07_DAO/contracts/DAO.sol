@@ -35,9 +35,9 @@ contract DAO is AccessControl {
     event VotingFinished(uint id, uint optionID);
     event Voted(address voter, uint id, uint option, uint amount);
 
-    constructor(address _chairman, address _erc20Address) {
+    constructor(address _erc20Address) {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _grantRole(CHAIRMAN, _chairman);
+        _grantRole(CHAIRMAN, msg.sender);
         erc20 = IERC20(_erc20Address);
     }
 

@@ -38,6 +38,7 @@
     "@nomicfoundation/hardhat-network-helpers": "^1.0.2",
     "@openzeppelin/contracts": "^4.7.0",
     "@uniswap/lib": "^4.0.1-alpha",
-    "@uniswap/v2-core": "^1.0.1"
+    "@uniswap/v2-core": "^1.0.1",
+    "hardhat-abi-exporter": "^2.10.0"
   }
 }

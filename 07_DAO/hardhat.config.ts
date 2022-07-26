@@ -6,6 +6,7 @@ import "@nomiclabs/hardhat-waffle";
 import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
+import "hardhat-abi-exporter"
 import "@nomiclabs/hardhat-etherscan";
 //import './tasks/swap.ts';
 //import './tasks/redeem.ts';
@@ -14,6 +15,15 @@ import "@nomiclabs/hardhat-etherscan";
 
 const config: HardhatUserConfig = {
   solidity: {compilers: [{version: "0.8.15"}]},
+
+  abiExporter: {
+    path: './data/abi',
+    runOnCompile: true,
+    clear: true,
+    flat: true,
+    spacing: 2,
+    pretty: true
+  },
 
   networks: {
     rinkeby: {
