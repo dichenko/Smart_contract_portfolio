@@ -116,6 +116,7 @@ contract DAO is AccessControl {
             block.timestamp >= votings[_id].startTime + debatePeriod,
             "The debate period is not over yet"
         );
+
         require(!votings[_id].finished, "This voting already finished");
         votings[_id].finished = true;
         bytes32 hash = keccak256(
@@ -123,7 +124,11 @@ contract DAO is AccessControl {
         );
         currentVotings[hash] = false;
         uint optionID = 0;
-        if (votings[_id].votesCounter[1] > votings[_id].votesCounter[0]) {
+        if (
+            votings[_id].votesCounter[1] > votings[_id].votesCounter[0] &&
+            votings[_id].votesCounter[0] + votings[_id].votesCounter[1] >=
+            (erc20.totalSupply() * 100) / quorumPercent
+        ) {
             (bool success, ) = votings[_id].recipient.call{value: 0}(
                 votings[_id].signature
             );

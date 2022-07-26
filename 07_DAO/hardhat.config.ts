@@ -17,12 +17,14 @@ const config: HardhatUserConfig = {
   solidity: {compilers: [{version: "0.8.15"}]},
 
   abiExporter: {
-    path: './data/abi',
+    path: "./abis",
     runOnCompile: true,
     clear: true,
     flat: true,
+    only: [],
     spacing: 2,
-    pretty: true
+    pretty: false,
+ 
   },
 
   networks: {

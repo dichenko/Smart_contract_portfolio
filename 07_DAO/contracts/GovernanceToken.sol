@@ -6,6 +6,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract GovernanceToken is ERC20, Ownable {
     constructor() ERC20("GovernanceToken", "GTK") {
-        _mint(msg.sender, 1000 * 10 ** decimals());
+        _mint(msg.sender, 3 * 10 ** decimals());
     }
 }

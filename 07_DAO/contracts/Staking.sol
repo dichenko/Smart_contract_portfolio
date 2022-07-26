@@ -6,8 +6,8 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 contract Staking is AccessControl {
     bytes32 public constant DAO = keccak256("DAO");
 
-    uint public percent = 1150;
-    uint public percentDecimals = 2;
+    uint public percent = 10;
+    
 
     constructor() {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
