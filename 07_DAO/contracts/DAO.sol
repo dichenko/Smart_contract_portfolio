@@ -14,6 +14,7 @@ contract DAO is AccessControl {
     mapping(address => uint) unlockTime;
     mapping(address => uint) depositAmount;
     mapping(bytes32 => bool) currentVotings;
+    mapping (uint => mapping (address => bool)) voters;
 
     struct Voting {
         bool finished;
@@ -82,10 +83,10 @@ contract DAO is AccessControl {
         );
         erc20.transferFrom(msg.sender, address(this), _amount);
         depositAmount[msg.sender] += _amount;
-        unlockTime[msg.sender] = block.timestamp + debatePeriod;
+        
     }
 
-    /// @notice withdraw  all deposited tokens from DAO
+    /// @notice Withdraw all deposited tokens from DAO
     function withdraw() external {
         require(depositAmount[msg.sender] > 0, "Nothind to withdraw");
         require(block.timestamp >= unlockTime[msg.sender], "Stil locked");
@@ -93,18 +94,22 @@ contract DAO is AccessControl {
         depositAmount[msg.sender] = 0;
     }
 
-    /// @notice Deposit DAO tokens from user to DAO contract
+    /// @notice Vote for proposal id, option id
     /// @param _id id of voting
     /// @param _option option pro/contra - 1/0
     /// @custom:emit VotingFinished event
     function vote(uint _id, uint _option) external {
+        require(!voters[_id][msg.sender], "Already voted");
         require(
             depositAmount[msg.sender] > 0,
             "Need deposit tokens before vote"
         );
         require(_id < votings.length, "Voting doesnt exist");
         require(!votings[_id].finished, "Voting already finished");
+        require(votings[_id].startTime + debatePeriod  > block.timestamp, "Debate period is up");
+        voters[_id][msg.sender] = true;
         votings[_id].votesCounter[_option] += depositAmount[msg.sender];
+        unlockTime[msg.sender] = block.timestamp + debatePeriod;
         emit Voted(msg.sender, _id, _option, depositAmount[msg.sender]);
     }
 
@@ -133,7 +138,7 @@ contract DAO is AccessControl {
         ) {
             address recip = votings[_id].recipient;
             bytes memory sig = votings[_id].signature;
-            
+
             (bool success, ) = recip.call{value: 0}(sig);
             require(success, "ERROR call func");
             optionID = 1;

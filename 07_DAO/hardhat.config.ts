@@ -8,6 +8,7 @@ import "hardhat-gas-reporter";
 import "solidity-coverage";
 import "hardhat-abi-exporter"
 import "@nomiclabs/hardhat-etherscan";
+import 'hardhat-docgen';
 //import './tasks/swap.ts';
 //import './tasks/redeem.ts';
 
@@ -26,6 +27,12 @@ const config: HardhatUserConfig = {
     pretty: false,
  
   },
+  docgen: {
+    path: './docs',
+    clear: true,
+    runOnCompile: true,
+  },
+ 
 
   networks: {
     rinkeby: {

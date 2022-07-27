@@ -58,7 +58,12 @@ describe("DAO", function () {
     await erc20.connect(user3).approve(dao.address, ethers.utils.parseEther("1"));
   });
 
-  describe("DAO-add-finish-proposal", function () {
+  describe("Add-finish proposal", function () {
+    it("Should not double proposals", async function () {
+      await dao.connect(chairman).addProposal(staking1.address, "0x");
+      await expect(dao.connect(chairman).addProposal(staking1.address, "0x")).to.be.revertedWith("Proposal already added");
+    });
+
     it("Proposal should call staking contract after voting", async function () {
       expect(await staking1.percent()).to.eq(10);
 
