@@ -1,10 +1,8 @@
 import { expect } from "chai";
 import { ethers, network } from "hardhat";
-import { BigNumber } from "ethers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { Contract } from "ethers";
 import * as dotenv from "dotenv";
-import { AbiCoder, defaultPath } from "ethers/lib/utils";
 
 const stakingABI = require("../abis/Staking.json");
 dotenv.config();
