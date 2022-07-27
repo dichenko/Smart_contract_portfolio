@@ -9,7 +9,7 @@ import { AbiCoder, defaultPath } from "ethers/lib/utils";
 const stakingABI = require("../abis/Staking.json");
 dotenv.config();
 
-describe("DAO", function () {
+describe("DAO add-finish proposal", function () {
   let dao: Contract;
   let erc20: Contract;
   let staking1: Contract;
@@ -59,9 +59,11 @@ describe("DAO", function () {
   });
 
   describe("Add-finish proposal", function () {
-    it("Should not double proposals", async function () {
+    it("Should not add double proposals", async function () {
       await dao.connect(chairman).addProposal(staking1.address, "0x");
-      await expect(dao.connect(chairman).addProposal(staking1.address, "0x")).to.be.revertedWith("Proposal already added");
+      await expect(dao.connect(chairman).addProposal(staking1.address, "0x")).to.be.revertedWith(
+        "Proposal already added"
+      );
     });
 
     it("Proposal should call staking contract after voting", async function () {
@@ -70,15 +72,17 @@ describe("DAO", function () {
       //Preparing of proposal calldata
       const iface = new ethers.utils.Interface(stakingABI);
       const calldata = iface.encodeFunctionData("setPercent", [20]);
-      
+
       //add proposal by chairman
       await dao.connect(chairman).addProposal(staking1.address, calldata);
-      
+
       //vote
       await dao.connect(user1).deposit(ethers.utils.parseEther("1"));
       await dao.connect(user1).vote(0, 1);
       await dao.connect(user2).deposit(ethers.utils.parseEther("1"));
       await dao.connect(user2).vote(0, 1);
+      await dao.connect(user3).deposit(ethers.utils.parseEther("1"));
+      await dao.connect(user3).vote(0, 1);
 
       //wait for debate period is up
       let debatePeriod = Number(await dao.debatePeriod());
@@ -88,8 +92,74 @@ describe("DAO", function () {
         .to.emit(dao, "VotingFinished")
         .withArgs(0, 1);
 
-
       expect(await staking1.percent()).to.eq(20);
+    });
+
+    it("Proposal should not call staking if voting is negative ", async function () {
+      expect(await staking1.percent()).to.eq(10);
+
+      //Preparing of proposal calldata
+      const iface = new ethers.utils.Interface(stakingABI);
+      const calldata = iface.encodeFunctionData("setPercent", [20]);
+
+      //add proposal by chairman
+      await dao.connect(chairman).addProposal(staking1.address, calldata);
+
+      //vote
+      await dao.connect(user1).deposit(ethers.utils.parseEther("1"));
+      await dao.connect(user1).vote(0, 1);
+
+      //wait for debate period is up
+      let debatePeriod = Number(await dao.debatePeriod());
+      await network.provider.send("evm_increaseTime", [debatePeriod]);
+
+      expect(await dao.finish(0))
+        .to.emit(dao, "VotingFinished")
+        .withArgs(0, 0);
+
+      expect(await staking1.percent()).to.eq(10);
+    });
+
+    it("Should revert if signature is invalid", async function () {
+      expect(await staking1.percent()).to.eq(10);
+
+      //Preparing of proposal calldata
+
+      //add proposal by chairman
+      await dao.connect(chairman).addProposal(staking1.address, "0x");
+
+      //vote
+      await dao.connect(user1).deposit(ethers.utils.parseEther("1"));
+      await dao.connect(user1).vote(0, 1);
+      await dao.connect(user2).deposit(ethers.utils.parseEther("1"));
+      await dao.connect(user2).vote(0, 1);
+      await dao.connect(user3).deposit(ethers.utils.parseEther("1"));
+      await dao.connect(user3).vote(0, 1);
+
+      //wait for debate period is up
+      let debatePeriod = Number(await dao.debatePeriod());
+      await network.provider.send("evm_increaseTime", [debatePeriod]);
+
+      await expect(dao.finish(0)).to.revertedWith("Incorrect signature");
+
+      expect(await staking1.percent()).to.eq(10);
+    });
+
+    it("Should not finish proposal before debate period", async function () {
+      await dao.connect(chairman).addProposal(staking1.address, "0x");
+      await expect(dao.connect(chairman).finish(0)).to.be.revertedWith(
+        "The debate period is not over yet"
+      );
+    });
+
+    it("Should not finish proposal twice", async function () {
+      await dao.connect(chairman).addProposal(staking1.address, "0x");
+      let debatePeriod = Number(await dao.debatePeriod());
+      await network.provider.send("evm_increaseTime", [debatePeriod]);
+      await dao.connect(chairman).finish(0);
+      await expect(dao.connect(chairman).finish(0)).to.be.revertedWith(
+        "This voting already finished"
+      );
     });
   });
 });

@@ -9,7 +9,7 @@ import { AbiCoder, defaultPath } from "ethers/lib/utils";
 const ABI = require("../abis/Staking.json");
 dotenv.config();
 
-describe("DAO-vote", function () {
+describe("DAO vote", function () {
   let dao: Contract;
   let erc20: Contract;
   let staking1: Contract;
@@ -59,50 +59,52 @@ describe("DAO-vote", function () {
 
   describe("Vote", function () {
     it("Should vote only once", async function () {
-      await  dao.connect(chairman).addProposal(staking1.address, "0x");
-      await  dao.connect(user1).deposit(500);
-      await  dao.connect(user1).vote(0,1);
-      await expect(dao.connect(user1).vote(0,1)).to.be.revertedWith("Already voted'");
+      await dao.connect(chairman).addProposal(staking1.address, "0x");
+      await dao.connect(user1).deposit(500);
+      await dao.connect(user1).vote(0, 1);
+      await expect(dao.connect(user1).vote(0, 1)).to.be.revertedWith("Already voted'");
     });
 
     it("Should vote in any votes", async function () {
-      await  dao.connect(chairman).addProposal(staking1.address, "0x");
-      await  dao.connect(chairman).addProposal(staking2.address, "0x");
-      await  dao.connect(user1).deposit(500);
-      expect(await  dao.connect(user1).vote(0,1)).to.emit(dao, "Vote").withArgs(user1.address, 0, 1, 500);
-      expect(await  dao.connect(user1).vote(1,1)).to.emit(dao, "Vote").withArgs(user1.address, 1, 1, 500);
+      await dao.connect(chairman).addProposal(staking1.address, "0x");
+      await dao.connect(chairman).addProposal(staking2.address, "0x");
+      await dao.connect(user1).deposit(500);
+      expect(await dao.connect(user1).vote(0, 1))
+        .to.emit(dao, "Vote")
+        .withArgs(user1.address, 0, 1, 500);
+      expect(await dao.connect(user1).vote(1, 1))
+        .to.emit(dao, "Vote")
+        .withArgs(user1.address, 1, 1, 500);
     });
 
     it("Should not vote without tokens", async function () {
-      await  dao.connect(chairman).addProposal(staking1.address, "0x");
-      await expect( dao.connect(user1).vote(0,1)).to.be.revertedWith('Need deposit tokens before vote');
-      
+      await dao.connect(chairman).addProposal(staking1.address, "0x");
+      await expect(dao.connect(user1).vote(0, 1)).to.be.revertedWith(
+        "Need deposit tokens before vote"
+      );
     });
 
     it("Should vote for existing voting", async function () {
-      await  dao.connect(chairman).addProposal(staking1.address, "0x");
-      await  dao.connect(user1).deposit(500);
-      await expect( dao.connect(user1).vote(99,1)).to.be.revertedWith('Voting doesnt exist');
-      
+      await dao.connect(chairman).addProposal(staking1.address, "0x");
+      await dao.connect(user1).deposit(500);
+      await expect(dao.connect(user1).vote(99, 1)).to.be.revertedWith("Voting doesnt exist");
     });
 
     it("Should not vote after debate period", async function () {
       await dao.connect(chairman).addProposal(staking1.address, "0x");
-      await  dao.connect(user1).deposit(500);
+      await dao.connect(user1).deposit(500);
       let debatePeriod = Number(await dao.debatePeriod());
       await network.provider.send("evm_increaseTime", [debatePeriod + 1]);
-      await expect( dao.connect(user1).vote(0,1)).to.be.revertedWith('Debate period is up');
+      await expect(dao.connect(user1).vote(0, 1)).to.be.revertedWith("Debate period is up");
     });
 
     it("Should not vote after proposal is finished", async function () {
       await dao.connect(chairman).addProposal(staking1.address, "0x");
-      await  dao.connect(user1).deposit(500);
+      await dao.connect(user1).deposit(500);
       let debatePeriod = Number(await dao.debatePeriod());
       await network.provider.send("evm_increaseTime", [debatePeriod + 1]);
       await dao.finish(0);
-      await expect( dao.connect(user1).vote(0,1)).to.be.revertedWith('Voting already finished');
+      await expect(dao.connect(user1).vote(0, 1)).to.be.revertedWith("Voting already finished");
     });
-
-
   });
 });

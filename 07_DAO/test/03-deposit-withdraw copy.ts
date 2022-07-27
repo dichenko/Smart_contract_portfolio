@@ -9,7 +9,7 @@ import { AbiCoder, defaultPath } from "ethers/lib/utils";
 const ABI = require("../abis/Staking.json");
 dotenv.config();
 
-describe("DAO-deposit-withdraw", function () {
+describe("DAO deposit-withdraw", function () {
   let dao: Contract;
   let erc20: Contract;
   let staking1: Contract;
@@ -59,62 +59,65 @@ describe("DAO-deposit-withdraw", function () {
 
   describe("Deposit", function () {
     it("Should update balances after deposit", async function () {
-      await expect(() => dao.connect(user1).deposit(500)).to.changeTokenBalances(erc20, [user1, dao], [-500, 500]);
+      await expect(() => dao.connect(user1).deposit(500)).to.changeTokenBalances(
+        erc20,
+        [user1, dao],
+        [-500, 500]
+      );
     });
 
     it("Should have enough tokens to deposit", async function () {
       await erc20.connect(user1).approve(dao.address, ethers.utils.parseEther("100"));
-      await expect(dao.connect(user1).deposit(ethers.utils.parseEther("100"))).to.revertedWith("Not enough tokens");
+      await expect(dao.connect(user1).deposit(ethers.utils.parseEther("100"))).to.revertedWith(
+        "Not enough tokens"
+      );
     });
 
     it("Should approve tokens before deposit", async function () {
       await erc20.connect(user1).approve(dao.address, 0);
-      await expect(dao.connect(user1).deposit(ethers.utils.parseEther("1"))).to.revertedWith("Not allowed");
+      await expect(dao.connect(user1).deposit(ethers.utils.parseEther("1"))).to.revertedWith(
+        "Not allowed"
+      );
     });
-
-
   });
 
   describe("Withdraw", function () {
-
     it("Should deposit before withdraw ", async function () {
       await expect(dao.connect(user1).withdraw()).to.revertedWith("Nothind to withdraw");
     });
 
     it("Should withdraw if haven't voted yet", async function () {
-      await  dao.connect(user1).deposit(500);
-      await expect(() => dao.connect(user1).withdraw()).to.changeTokenBalances(erc20, [user1, dao], [500, -500]);
+      await dao.connect(user1).deposit(500);
+      await expect(() => dao.connect(user1).withdraw()).to.changeTokenBalances(
+        erc20,
+        [user1, dao],
+        [500, -500]
+      );
     });
 
     it("Should not withdraw before debate period is up", async function () {
-      await  dao.connect(chairman).addProposal(staking1.address, "0x");
-      await  dao.connect(user1).deposit(500);
-      await  dao.connect(user1).vote(0,1);
+      await dao.connect(chairman).addProposal(staking1.address, "0x");
+      await dao.connect(user1).deposit(500);
+      await dao.connect(user1).vote(0, 1);
       await expect(dao.connect(user1).withdraw()).to.revertedWith("Stil locked");
     });
 
     it("Should not withdraw before all debate periods is up", async function () {
-
       //voting 1
-      await  dao.connect(chairman).addProposal(staking1.address, "0x");
-      await  dao.connect(user1).deposit(500);
-      await  dao.connect(user1).vote(0,1);
+      await dao.connect(chairman).addProposal(staking1.address, "0x");
+      await dao.connect(user1).deposit(500);
+      await dao.connect(user1).vote(0, 1);
 
       await network.provider.send("evm_increaseTime", [10000]);
 
       // voting2
-      await  dao.connect(chairman).addProposal(staking2.address, "0x");
-      await  dao.connect(user1).vote(1,1);
+      await dao.connect(chairman).addProposal(staking2.address, "0x");
+      await dao.connect(user1).vote(1, 1);
 
       let debatePeriod = Number(await dao.debatePeriod());
       await network.provider.send("evm_increaseTime", [debatePeriod - 10000]);
 
       await expect(dao.connect(user1).withdraw()).to.revertedWith("Stil locked");
     });
-
-
-
-
   });
-
 });

@@ -134,13 +134,13 @@ contract DAO is AccessControl {
         if (
             votings[_id].votesCounter[1] > votings[_id].votesCounter[0] &&
             votings[_id].votesCounter[0] + votings[_id].votesCounter[1] >=
-            (erc20.totalSupply() * 100) / quorumPercent
+            (erc20.totalSupply() * quorumPercent) /100
         ) {
             address recip = votings[_id].recipient;
             bytes memory sig = votings[_id].signature;
 
             (bool success, ) = recip.call{value: 0}(sig);
-            require(success, "ERROR call func");
+            require(success, "Incorrect signature");
             optionID = 1;
         }
         emit VotingFinished(_id, optionID);
