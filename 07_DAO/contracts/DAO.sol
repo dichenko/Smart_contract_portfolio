@@ -14,7 +14,7 @@ contract DAO is AccessControl {
     mapping(address => uint) unlockTime;
     mapping(address => uint) depositAmount;
     mapping(bytes32 => bool) currentVotings;
-    mapping (uint => mapping (address => bool)) voters;
+    mapping(uint => mapping(address => bool)) voters;
 
     struct Voting {
         bool finished;
@@ -83,7 +83,6 @@ contract DAO is AccessControl {
         );
         erc20.transferFrom(msg.sender, address(this), _amount);
         depositAmount[msg.sender] += _amount;
-        
     }
 
     /// @notice Withdraw all deposited tokens from DAO
@@ -106,7 +105,10 @@ contract DAO is AccessControl {
         );
         require(_id < votings.length, "Voting doesnt exist");
         require(!votings[_id].finished, "Voting already finished");
-        require(votings[_id].startTime + debatePeriod  > block.timestamp, "Debate period is up");
+        require(
+            votings[_id].startTime + debatePeriod > block.timestamp,
+            "Debate period is up"
+        );
         voters[_id][msg.sender] = true;
         votings[_id].votesCounter[_option] += depositAmount[msg.sender];
         unlockTime[msg.sender] = block.timestamp + debatePeriod;
@@ -134,7 +136,7 @@ contract DAO is AccessControl {
         if (
             votings[_id].votesCounter[1] > votings[_id].votesCounter[0] &&
             votings[_id].votesCounter[0] + votings[_id].votesCounter[1] >=
-            (erc20.totalSupply() * quorumPercent) /100
+            (erc20.totalSupply() * quorumPercent) / 100
         ) {
             address recip = votings[_id].recipient;
             bytes memory sig = votings[_id].signature;
