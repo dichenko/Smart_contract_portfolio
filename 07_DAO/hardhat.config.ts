@@ -8,9 +8,12 @@ import "hardhat-gas-reporter";
 import "solidity-coverage";
 import "hardhat-abi-exporter"
 import "@nomiclabs/hardhat-etherscan";
-import 'hardhat-docgen';
-//import './tasks/swap.ts';
-//import './tasks/redeem.ts';
+//import 'hardhat-docgen';
+
+import './tasks/add-proposal.ts';
+import './tasks/deposit.ts';
+import './tasks/vote.ts';
+import './tasks/finish.ts';
 
 
 
@@ -27,13 +30,12 @@ const config: HardhatUserConfig = {
     pretty: false,
  
   },
-  docgen: {
-    path: './docs',
-    clear: true,
-    runOnCompile: true,
-  },
+  // docgen: {
+  //   path: './docs',
+  //   clear: true,
+  //   runOnCompile: true,
+  // },
  
-
   networks: {
     goerli: {
       url: process.env.STAGING_ALCHEMY_KEY || "",
