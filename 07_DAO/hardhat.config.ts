@@ -35,7 +35,7 @@ const config: HardhatUserConfig = {
  
 
   networks: {
-    rinkeby: {
+    goerli: {
       url: process.env.STAGING_ALCHEMY_KEY || "",
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
