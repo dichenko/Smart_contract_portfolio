@@ -18,4 +18,4 @@
 - Финишировать голосование может любой пользователь по прошествии определенного количества времени установленном в конструкторе.
 
 ## Deployment
-[Contract deployed and verified in Rinkeby network](https://goerli.etherscan.io/address/0xb874b1D85532576202Aa15F0f45fca4A327415F6#code)
+[Contract deployed and verified in Goerli network](https://goerli.etherscan.io/address/0xb874b1D85532576202Aa15F0f45fca4A327415F6#code)
