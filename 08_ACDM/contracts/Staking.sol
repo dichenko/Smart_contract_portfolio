@@ -60,10 +60,16 @@ contract Staking is AccessControl {
         emit Unstaked(msg.sender, _amount);
     }
 
-    ///@notice Transfers reward-tokens from staking contract  to caller balance, after locktime is up
+    ///@notice Transfers reward-tokens from staking contract  to caller balance, N percent every week
     function claim() public {
-        rewardToken.transfer(msg.sender, stakes[msg.sender].rewardAmount);
-        stakes[msg.sender].rewardAmount = 0;
+        require (block.timestamp - stakes[msg.sender].lastWithdrawTime >= 1 weeks, "Wait for 1 week");
+        uint week = 60*60*24*7;
+        uint passedTime = block.timestamp - stakes[msg.sender].lastWithdrawTime;
+        uint weeksCounter = passedTime / week;
+        uint weekReward = stakes[msg.sender].amount * rewardPercent / 100;
+        uint rewardAmount = weekReward *  weeksCounter;
+        rewardToken.transfer(msg.sender, rewardAmount);
+        stakes[msg.sender].lastWithdrawTime = block.timestamp;
     }
 
     ///@notice Sets lock time for LP-tokens, only role: DAO
@@ -77,5 +83,11 @@ contract Staking is AccessControl {
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
         daoAddress = _daoAddress;
+    }
+
+    ///@notice Returns account stake's amount
+    ///@param _owner accounts owner 
+    function stakeAmount(address _owner) external view returns (uint){
+        return stakes[_owner].amount;
     }
 }

@@ -4,15 +4,20 @@ pragma solidity 0.8.15;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
+interface IStaking {
+    function stakeAmount(address) external returns (uint);
+}
+
 contract DAO is AccessControl {
     IERC20 erc20;
+    IStaking staking;
     bytes32 public constant CHAIRMAN = keccak256("CHAIRMAN");
 
     uint public debatePeriod = 3 days;
     uint public quorumPercent = 51;
 
-    mapping(address => uint) unlockTime;
-    mapping(address => uint) depositAmount;
+    mapping(address => uint) public unlockTime;
+    //mapping(address => uint) depositAmount;
     mapping(bytes32 => bool) currentVotings;
     mapping(uint => mapping(address => bool)) voters;
 
@@ -36,10 +41,11 @@ contract DAO is AccessControl {
     event VotingFinished(uint id, uint optionID);
     event Voted(address voter, uint id, uint option, uint amount);
 
-    constructor(address _erc20Address) {
+    constructor(address _lpAddress, address _stakingAddress) {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(CHAIRMAN, msg.sender);
-        erc20 = IERC20(_erc20Address);
+        erc20 = IERC20(_lpAddress);
+        staking = IStaking(_stakingAddress);
     }
 
     /// @notice Add proposal for new voting
@@ -73,46 +79,26 @@ contract DAO is AccessControl {
         );
     }
 
-    /// @notice Deposit DAO tokens from user to DAO contract
-    /// @param _amount amount of deposit
-    function deposit(uint _amount) external {
-        require(erc20.balanceOf(msg.sender) >= _amount, "Not enough tokens");
-        require(
-            erc20.allowance(msg.sender, address(this)) >= _amount,
-            "Not allowed"
-        );
-        erc20.transferFrom(msg.sender, address(this), _amount);
-        depositAmount[msg.sender] += _amount;
-    }
-
-    /// @notice Withdraw all deposited tokens from DAO
-    function withdraw() external {
-        require(depositAmount[msg.sender] > 0, "Nothind to withdraw");
-        require(block.timestamp >= unlockTime[msg.sender], "Stil locked");
-        erc20.transfer(msg.sender, depositAmount[msg.sender]);
-        depositAmount[msg.sender] = 0;
-    }
-
     /// @notice Vote for proposal id, option id
     /// @param _id id of voting
     /// @param _option option pro/contra - 1/0
     /// @custom:emit VotingFinished event
     function vote(uint _id, uint _option) external {
         require(!voters[_id][msg.sender], "Already voted");
-        require(
-            depositAmount[msg.sender] > 0,
-            "Need deposit tokens before vote"
-        );
         require(_id < votings.length, "Voting doesnt exist");
         require(!votings[_id].finished, "Voting already finished");
         require(
             votings[_id].startTime + debatePeriod > block.timestamp,
             "Debate period is up"
         );
+
+        uint depositAmount = staking.stakeAmount(msg.sender);
+        require(depositAmount > 0, "Need deposit tokens before vote");
+
         voters[_id][msg.sender] = true;
-        votings[_id].votesCounter[_option] += depositAmount[msg.sender];
+        votings[_id].votesCounter[_option] += depositAmount;
         unlockTime[msg.sender] = block.timestamp + debatePeriod;
-        emit Voted(msg.sender, _id, _option, depositAmount[msg.sender]);
+        emit Voted(msg.sender, _id, _option, depositAmount);
     }
 
     /// @notice Finish voting
