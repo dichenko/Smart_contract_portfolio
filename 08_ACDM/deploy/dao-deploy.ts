@@ -18,6 +18,7 @@ async function main() {
   console.log("DAO deployed to:", dao.address);
 
   console.log("Try to verify contract");
+  ///@FIX
 
 }
 

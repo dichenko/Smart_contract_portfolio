@@ -25,7 +25,6 @@ interface DAOInterface extends ethers.utils.Interface {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "addProposal(address,bytes)": FunctionFragment;
     "debatePeriod()": FunctionFragment;
-    "deposit(uint256)": FunctionFragment;
     "finish(uint256)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
@@ -33,10 +32,12 @@ interface DAOInterface extends ethers.utils.Interface {
     "quorumPercent()": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
+    "setStaking(address)": FunctionFragment;
+    "stakingAddress()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
+    "unlockTime(address)": FunctionFragment;
     "vote(uint256,uint256)": FunctionFragment;
     "votings(uint256)": FunctionFragment;
-    "withdraw()": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "CHAIRMAN", values?: undefined): string;
@@ -51,10 +52,6 @@ interface DAOInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "debatePeriod",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "deposit",
-    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "finish",
@@ -84,10 +81,16 @@ interface DAOInterface extends ethers.utils.Interface {
     functionFragment: "revokeRole",
     values: [BytesLike, string]
   ): string;
+  encodeFunctionData(functionFragment: "setStaking", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "stakingAddress",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [BytesLike]
   ): string;
+  encodeFunctionData(functionFragment: "unlockTime", values: [string]): string;
   encodeFunctionData(
     functionFragment: "vote",
     values: [BigNumberish, BigNumberish]
@@ -96,7 +99,6 @@ interface DAOInterface extends ethers.utils.Interface {
     functionFragment: "votings",
     values: [BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "withdraw", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "CHAIRMAN", data: BytesLike): Result;
   decodeFunctionResult(
@@ -111,7 +113,6 @@ interface DAOInterface extends ethers.utils.Interface {
     functionFragment: "debatePeriod",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "finish", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getRoleAdmin",
@@ -128,13 +129,18 @@ interface DAOInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "setStaking", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "stakingAddress",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "unlockTime", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "vote", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "votings", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
 
   events: {
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
@@ -247,11 +253,6 @@ export class DAO extends BaseContract {
 
     debatePeriod(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    deposit(
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     finish(
       _id: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -285,10 +286,19 @@ export class DAO extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setStaking(
+      _stakingAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    stakingAddress(overrides?: CallOverrides): Promise<[string]>;
+
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    unlockTime(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
     vote(
       _id: BigNumberish,
@@ -308,10 +318,6 @@ export class DAO extends BaseContract {
         signature: string;
       }
     >;
-
-    withdraw(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
   };
 
   CHAIRMAN(overrides?: CallOverrides): Promise<string>;
@@ -325,11 +331,6 @@ export class DAO extends BaseContract {
   ): Promise<ContractTransaction>;
 
   debatePeriod(overrides?: CallOverrides): Promise<BigNumber>;
-
-  deposit(
-    _amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
 
   finish(
     _id: BigNumberish,
@@ -364,10 +365,19 @@ export class DAO extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setStaking(
+    _stakingAddress: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  stakingAddress(overrides?: CallOverrides): Promise<string>;
+
   supportsInterface(
     interfaceId: BytesLike,
     overrides?: CallOverrides
   ): Promise<boolean>;
+
+  unlockTime(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   vote(
     _id: BigNumberish,
@@ -388,10 +398,6 @@ export class DAO extends BaseContract {
     }
   >;
 
-  withdraw(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   callStatic: {
     CHAIRMAN(overrides?: CallOverrides): Promise<string>;
 
@@ -404,8 +410,6 @@ export class DAO extends BaseContract {
     ): Promise<void>;
 
     debatePeriod(overrides?: CallOverrides): Promise<BigNumber>;
-
-    deposit(_amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
     finish(_id: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
@@ -437,10 +441,19 @@ export class DAO extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setStaking(
+      _stakingAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    stakingAddress(overrides?: CallOverrides): Promise<string>;
+
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    unlockTime(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     vote(
       _id: BigNumberish,
@@ -460,8 +473,6 @@ export class DAO extends BaseContract {
         signature: string;
       }
     >;
-
-    withdraw(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {
@@ -599,11 +610,6 @@ export class DAO extends BaseContract {
 
     debatePeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
-    deposit(
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     finish(
       _id: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -640,10 +646,19 @@ export class DAO extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    setStaking(
+      _stakingAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    stakingAddress(overrides?: CallOverrides): Promise<BigNumber>;
+
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    unlockTime(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     vote(
       _id: BigNumberish,
@@ -652,10 +667,6 @@ export class DAO extends BaseContract {
     ): Promise<BigNumber>;
 
     votings(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
-
-    withdraw(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -672,11 +683,6 @@ export class DAO extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     debatePeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    deposit(
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
 
     finish(
       _id: BigNumberish,
@@ -714,8 +720,20 @@ export class DAO extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    setStaking(
+      _stakingAddress: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    stakingAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     supportsInterface(
       interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    unlockTime(
+      arg0: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -728,10 +746,6 @@ export class DAO extends BaseContract {
     votings(
       arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    withdraw(
-      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

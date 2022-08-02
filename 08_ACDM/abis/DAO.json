@@ -10,7 +10,6 @@
   "function DEFAULT_ADMIN_ROLE() view returns (bytes32)",
   "function addProposal(address,bytes)",
   "function debatePeriod() view returns (uint256)",
-  "function deposit(uint256)",
   "function finish(uint256)",
   "function getRoleAdmin(bytes32) view returns (bytes32)",
   "function grantRole(bytes32,address)",
@@ -18,8 +17,10 @@
   "function quorumPercent() view returns (uint256)",
   "function renounceRole(bytes32,address)",
   "function revokeRole(bytes32,address)",
+  "function setStaking(address)",
+  "function stakingAddress() view returns (address)",
   "function supportsInterface(bytes4) view returns (bool)",
+  "function unlockTime(address) view returns (uint256)",
   "function vote(uint256,uint256)",
-  "function votings(uint256) view returns (bool, uint256, address, address, bytes)",
-  "function withdraw()"
+  "function votings(uint256) view returns (bool, uint256, address, address, bytes)"
 ]

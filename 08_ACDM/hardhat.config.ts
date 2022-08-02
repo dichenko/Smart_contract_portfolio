@@ -28,11 +28,11 @@ const config: HardhatUserConfig = {
     pretty: true,
  
   },
-  docgen: {
-    path: './docs',
-    clear: true,
-    runOnCompile: true,
-  },
+  // docgen: {
+  //   path: './docs',
+  //   clear: true,
+  //   runOnCompile: true,
+  // },
  
   networks: {
     goerli: {

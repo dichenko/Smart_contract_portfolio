@@ -11,13 +11,13 @@ interface IStaking {
 contract DAO is AccessControl {
     IERC20 erc20;
     IStaking staking;
+    address public stakingAddress;
     bytes32 public constant CHAIRMAN = keccak256("CHAIRMAN");
 
     uint public debatePeriod = 3 days;
     uint public quorumPercent = 51;
 
     mapping(address => uint) public unlockTime;
-    //mapping(address => uint) depositAmount;
     mapping(bytes32 => bool) currentVotings;
     mapping(uint => mapping(address => bool)) voters;
 
@@ -41,16 +41,26 @@ contract DAO is AccessControl {
     event VotingFinished(uint id, uint optionID);
     event Voted(address voter, uint id, uint option, uint amount);
 
-    constructor(address _lpAddress, address _stakingAddress) {
+    constructor(address _lpAddress) {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(CHAIRMAN, msg.sender);
         erc20 = IERC20(_lpAddress);
-        staking = IStaking(_stakingAddress);
+    }
+
+    /// @notice Sets staking address, only default admin, only once
+    /// @param _stakingAddress address of staking contract
+    function setStaking(address _stakingAddress)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        require(stakingAddress == address(0), "Staking already setted");
+        stakingAddress = _stakingAddress;
+        staking = IStaking(stakingAddress);
     }
 
     /// @notice Add proposal for new voting
     /// @param _recipient address of recipien contract
-    /// @param _signature signature of called function
+    /// @param _signature of called function
     /// @custom:emit VotingStarted event
     function addProposal(address _recipient, bytes calldata _signature)
         external
@@ -84,8 +94,8 @@ contract DAO is AccessControl {
     /// @param _option option pro/contra - 1/0
     /// @custom:emit VotingFinished event
     function vote(uint _id, uint _option) external {
-        require(!voters[_id][msg.sender], "Already voted");
         require(_id < votings.length, "Voting doesnt exist");
+        require(!voters[_id][msg.sender], "Already voted");
         require(!votings[_id].finished, "Voting already finished");
         require(
             votings[_id].startTime + debatePeriod > block.timestamp,

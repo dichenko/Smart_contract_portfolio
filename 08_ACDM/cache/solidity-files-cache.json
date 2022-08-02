@@ -427,8 +427,8 @@
       ]
     },
     "C:\\Users\\user\\Documents\\GitHub\\Smart_contract_portfolio\\08_ACDM\\contracts\\DAO.sol": {
-      "lastModificationDate": 1658928063149,
-      "contentHash": "90e9eef1949f884b1150a13c767badfb",
+      "lastModificationDate": 1659322265204,
+      "contentHash": "ee0612e0fee15afe6b66503ff887702f",
       "sourceName": "contracts/DAO.sol",
       "solcConfig": {
         "version": "0.8.15",
@@ -463,12 +463,13 @@
         "0.8.15"
       ],
       "artifacts": [
-        "DAO"
+        "DAO",
+        "IStaking"
       ]
     },
     "C:\\Users\\user\\Documents\\GitHub\\Smart_contract_portfolio\\08_ACDM\\contracts\\ACDMToken.sol": {
-      "lastModificationDate": 1659245343310,
-      "contentHash": "c1b72cc3c05ffae382f0cd8fe27aeda9",
+      "lastModificationDate": 1659339585514,
+      "contentHash": "57300b653e03b45fd38d0a295c080c24",
       "sourceName": "contracts/ACDMToken.sol",
       "solcConfig": {
         "version": "0.8.15",
@@ -497,7 +498,7 @@
       },
       "imports": [
         "@openzeppelin/contracts/token/ERC20/ERC20.sol",
-        "@openzeppelin/contracts/access/Ownable.sol",
+        "@openzeppelin/contracts/access/AccessControl.sol",
         "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol"
       ],
       "versionPragmas": [
@@ -546,6 +547,166 @@
       ],
       "artifacts": [
         "XXXToken"
+      ]
+    },
+    "C:\\Users\\user\\Documents\\GitHub\\Smart_contract_portfolio\\08_ACDM\\contracts\\LPToken.sol": {
+      "lastModificationDate": 1659322461592,
+      "contentHash": "19d6c783388918a01ab7d8d8e223ba3b",
+      "sourceName": "contracts/LPToken.sol",
+      "solcConfig": {
+        "version": "0.8.15",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.4"
+      ],
+      "artifacts": [
+        "LPToken"
+      ]
+    },
+    "C:\\Users\\user\\Documents\\GitHub\\Smart_contract_portfolio\\08_ACDM\\contracts\\Staking.sol": {
+      "lastModificationDate": 1659335607328,
+      "contentHash": "ba7e49759afb0168f10e1c162e39d844",
+      "sourceName": "contracts/Staking.sol",
+      "solcConfig": {
+        "version": "0.8.15",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@openzeppelin/contracts/access/AccessControl.sol"
+      ],
+      "versionPragmas": [
+        "0.8.15"
+      ],
+      "artifacts": [
+        "IDao",
+        "Staking"
+      ]
+    },
+    "C:\\Users\\user\\Documents\\GitHub\\Smart_contract_portfolio\\08_ACDM\\contracts\\IUniswapV2Router02.sol": {
+      "lastModificationDate": 1659245849288,
+      "contentHash": "20cbb92bac5deeb64f02d86d5f52306d",
+      "sourceName": "contracts/IUniswapV2Router02.sol",
+      "solcConfig": {
+        "version": "0.8.15",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.6.2"
+      ],
+      "artifacts": [
+        "IUniswapV2Router01",
+        "IUniswapV2Router02"
+      ]
+    },
+    "C:\\Users\\user\\Documents\\GitHub\\Smart_contract_portfolio\\08_ACDM\\contracts\\ACDMPlatform.sol": {
+      "lastModificationDate": 1659415853386,
+      "contentHash": "a18031e6fa5d6bfb35a7672e347e52b7",
+      "sourceName": "contracts/ACDMPlatform.sol",
+      "solcConfig": {
+        "version": "0.8.15",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/access/AccessControl.sol"
+      ],
+      "versionPragmas": [
+        "0.8.15"
+      ],
+      "artifacts": [
+        "ACDMplatform",
+        "IACDM_TOKEN"
       ]
     }
   }

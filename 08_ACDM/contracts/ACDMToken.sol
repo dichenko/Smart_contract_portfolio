@@ -2,19 +2,25 @@
 pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 
-contract ACADMToken is ERC20, Ownable, ERC20Burnable {
+contract ACADMToken is ERC20, AccessControl, ERC20Burnable {
+    bytes32 public constant MINTER_BURNER = keccak256("MINTER_BURNER");
+
     constructor() ERC20("ACADM Coin", "ACDM") {
-        _mint(msg.sender, 3 * 10 ** decimals());
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
     function decimals() public pure override returns (uint8) {
         return 6;
     }
 
-     function mint(address to, uint256 amount) public onlyOwner {
-        _mint(to, amount);
+    function mint(uint256 _amount) public onlyRole(MINTER_BURNER) {
+        _mint(msg.sender, _amount);
+    }
+
+    function burn(uint _amount) public override onlyRole(MINTER_BURNER) {
+        _burn(_msgSender(), _amount);
     }
 }
