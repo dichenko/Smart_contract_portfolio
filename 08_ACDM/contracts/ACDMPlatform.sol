@@ -5,13 +5,17 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 
 interface IACDM_TOKEN {
     function mint(uint256 _amount) external;
+
     function transfer(address to, uint256 amount) external returns (bool);
+
     function transferFrom(
         address from,
         address to,
         uint256 amount
     ) external returns (bool);
+
     function burn(uint _amount) external;
+
     function balanceOf(address account) external view returns (uint256);
     //function decimals() external returns (uint8);
 }
@@ -29,7 +33,7 @@ contract ACDMplatform is AccessControl {
     uint tradeRoundVolume = 1 ether;
     uint lastPrice = 10000000;
     uint acdmEmission = 100000;
-    uint lastRoundStartTime;
+    uint roundStartTime;
     uint acdmTokenDecimals;
 
     struct Order {
@@ -45,7 +49,6 @@ contract ACDMplatform is AccessControl {
     event OrderExecuted(uint _id);
     event OrderUpdated(uint _id, uint amount);
     event OrderRemoved(uint _id);
-  
 
     enum Status {
         Pending,
@@ -77,7 +80,7 @@ contract ACDMplatform is AccessControl {
     function startPLatform() external onlyRole(DEFAULT_ADMIN_ROLE) {
         require(status == Status.Pending, "Already started");
 
-        lastRoundStartTime = block.timestamp;
+        roundStartTime = block.timestamp;
         acdmToken.mint(acdmEmission);
         status = Status.Sale;
     }
@@ -85,35 +88,44 @@ contract ACDMplatform is AccessControl {
     ///@notice Buy acdm token with ETH during Sale round
     function buyAcdm() external payable onlySaleRound {
         require(
-            lastRoundStartTime + 3 days >= block.timestamp,
+            roundStartTime + 3 days >= block.timestamp,
             "Sale round time expired"
         );
         require(msg.value > lastPrice, "Not enough ether to buy token");
         acdmToken.transfer(msg.sender, msg.value / lastPrice);
-        _transferSaleRefferReward(msg.sender, msg.value);
+        _transferSaleReferReward(msg.sender, msg.value);
     }
 
     function startSaleRound() external onlyTradeRound {
-       require(lastRoundStartTime + 3 days <= block.timestamp, "Trade round is not over yet");
+        require(
+            roundStartTime + 3 days <= block.timestamp,
+            "Trade round is not over yet"
+        );
+        _updateTokenPrice();
+        acdmEmission = tradeRoundVolume / lastPrice;
+        acdmToken.mint(acdmEmission);
+        roundStartTime = block.timestamp;
         status = Status.Sale;
-        //TODO
     }
 
     ///@notice Starts trade round if sale round time expired or sold out
     function startTradeRound() external onlySaleRound {
         require(
-            ((lastRoundStartTime + 3 days <= block.timestamp) ||
+            ((roundStartTime + 3 days <= block.timestamp) ||
                 (acdmToken.balanceOf(address(this)) == 0)),
             "Sale round is not over yet"
         );
         tradeRoundVolume = 0;
-        lastRoundStartTime = block.timestamp;
+        roundStartTime = block.timestamp;
         status = Status.Trade;
     }
 
     ///@notice Add order during Trade Round
     function addOrder(uint _amount, uint _price) external onlyTradeRound {
-        require(lastRoundStartTime + 3 days >= block.timestamp, "Trade round time is over");
+        require(
+            roundStartTime + 3 days >= block.timestamp,
+            "Trade round time is over"
+        );
         acdmToken.transferFrom(msg.sender, address(this), _amount);
         orders.push(Order(false, payable(msg.sender), _amount, _price));
         emit OrderPlaced(orders.length - 1, _amount, _price);
@@ -121,7 +133,10 @@ contract ACDMplatform is AccessControl {
 
     ///@notice redeem order during the Trade Round
     function redeemOrder(uint _id) external payable onlyTradeRound {
-        require(lastRoundStartTime + 3 days >= block.timestamp, "Trade round time is over");
+        require(
+            roundStartTime + 3 days >= block.timestamp,
+            "Trade round time is over"
+        );
         Order storage order = orders[_id];
         require(!order.executed, "Order executed");
         uint amount = msg.value / order.price;
@@ -135,13 +150,18 @@ contract ACDMplatform is AccessControl {
             emit OrderUpdated(_id, order.amount);
         }
         tradeRoundVolume += amount;
-        payable(order.seller).transfer(msg.value * (1000 - commonTradeRoundReferPercent) / 1000);
+        payable(order.seller).transfer(
+            (msg.value * (1000 - commonTradeRoundReferPercent)) / 1000
+        );
         _transferTradeeReferReward(order.seller, msg.value);
     }
 
     ///@notice remove caller's order
-    function removeOrder(uint _id) external onlyTradeRound{
-        require(lastRoundStartTime + 3 days >= block.timestamp, "Trade round time is over");
+    function removeOrder(uint _id) external onlyTradeRound {
+        require(
+            roundStartTime + 3 days >= block.timestamp,
+            "Trade round time is over"
+        );
         Order storage order = orders[_id];
         require(order.seller == msg.sender, "You are not a seller");
         order.executed = true;
@@ -163,20 +183,29 @@ contract ACDMplatform is AccessControl {
         ///initiator can't get reward
     }
 
-     function _transferTradeeReferReward(address _iniciator, uint _value) private {
+    function _transferTradeeReferReward(address _iniciator, uint _value)
+        private
+    {
         ///@TODO
         ///@TODO Check if user trade with its reffer - he should not get reward
         ///initiator can't get reward
     }
 
-    ///@notice Sets new percent rate for reffer rewards
-    function setSaleRoundReferRewards(uint _newPercent1, uint _newPercent2) external onlyRole(DAO) {
+    ///@notice Sets new percent rate for reffer rewards in sale round
+    function setSaleRoundReferRewards(uint _newPercent1, uint _newPercent2)
+        external
+        onlyRole(DAO)
+    {
         saleRoundReferRewards[0] = _newPercent1;
         saleRoundReferRewards[1] = _newPercent2;
         commonSaleRoundReferPercent = _newPercent1 + _newPercent2;
     }
 
-     function setTradeRoundReferRewards(uint _newPercent1, uint _newPercent2) external onlyRole(DAO) {
+    ///@notice Sets new percent rate for reffer rewards in trade round
+    function setTradeRoundReferRewards(uint _newPercent1, uint _newPercent2)
+        external
+        onlyRole(DAO)
+    {
         tradeRoundReferRewards[0] = _newPercent1;
         tradeRoundReferRewards[1] = _newPercent2;
         commonTradeRoundReferPercent = _newPercent1 + _newPercent2;
@@ -186,5 +215,10 @@ contract ACDMplatform is AccessControl {
     function _updateTokenPrice() private {
         lastPrice = (lastPrice * 103) / 100 + 4000000000000;
         //@FIX
+    }
+
+    function withdraw() external onlyRole(DEFAULT_ADMIN_ROLE) {
+        uint balanceToWithdraw = address(this).balance - referralRewardBank;
+        payable(msg.sender).transfer(balanceToWithdraw);
     }
 }
