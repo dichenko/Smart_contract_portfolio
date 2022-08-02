@@ -54,10 +54,10 @@ describe("Staking", function () {
     await rewardToken.mint(staking.address, ethers.utils.parseEther("1"));
 
     //setup staking
-    await staking.setDao(dao.address);
+    await staking.setupDao(dao.address);
 
     //setup dao
-    await dao.setStaking(staking.address);
+    await dao.setupStaking(staking.address);
   });
 
   describe("Deployment", function () {
@@ -67,7 +67,7 @@ describe("Staking", function () {
     });
 
     it("Should not change DAO address", async function () {
-      await expect(staking.setDao(lpToken.address)).to.revertedWith("Dao already setted");
+      await expect(staking.setupDao(dao.address)).to.revertedWith("Dao already setted");
     });
   });
 

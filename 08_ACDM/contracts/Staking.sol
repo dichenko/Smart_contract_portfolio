@@ -40,13 +40,13 @@ contract Staking is AccessControl {
         rewardToken = IERC20(_rewardAddress);
     }
 
-      function setDao (address _daoAddress) external onlyRole(DEFAULT_ADMIN_ROLE){
+    ///@notice Setup DAO address
+    function setupDao(address _daoAddress) external onlyRole(DEFAULT_ADMIN_ROLE) {
         require(daoAddress == address(0), "Dao already setted");
         dao = IDao(_daoAddress);
         daoAddress = _daoAddress;
         _grantRole(DAO, _daoAddress);
     }
-
 
     ///@notice Transfers LP-tokens from caller balance to staking contract balance
     ///@param _amount of LP-tokens
@@ -57,18 +57,17 @@ contract Staking is AccessControl {
         stakes[msg.sender].timestamp = block.timestamp;
         stakes[msg.sender].lastWithdrawTime = block.timestamp;
         stakingValue += _amount;
-
         emit Staked(msg.sender, _amount);
     }
 
-    ///@notice Transfers LP-tokens from staking contract  to caller balance, after locktime is up
+    ///@notice Transfers LP-tokens from staking contract  to caller balance, after locktime
     ///@custom:event Emits Unstake event
     function unstake() public {
         require(
             block.timestamp >= stakes[msg.sender].timestamp + timeToLockLp,
             "Time lock"
         );
-        /// require tokens didnt participate in votings
+        /// require tokens didn't participate in votings
         require(
             dao.unlockTime(msg.sender) <= block.timestamp,
             "Wait for debate period is up"
@@ -100,14 +99,6 @@ contract Staking is AccessControl {
     ///@notice Sets lock time for LP-tokens, only role: DAO
     function setTimeToLockLp(uint _time) public onlyRole(DAO) {
         timeToLockLp = _time;
-    }
-
-    ///@notice Sets address of DAO contract, only role: DEFAULT_ADMIN_ROLE
-    function setDaoAddress(address _daoAddress)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
-    {
-        daoAddress = _daoAddress;
     }
 
     ///@notice Returns account stake's amount

@@ -2,5 +2,6 @@
   "function balanceOf(address) view returns (uint256)",
   "function burn(uint256)",
   "function mint(uint256)",
-  "function transfer(address,uint256) returns (bool)"
+  "function transfer(address,uint256) returns (bool)",
+  "function transferFrom(address,address,uint256) returns (bool)"
 ]

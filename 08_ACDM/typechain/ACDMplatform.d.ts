@@ -24,23 +24,28 @@ interface ACDMplatformInterface extends ethers.utils.Interface {
   functions: {
     "DAO()": FunctionFragment;
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
-    "acdmLiquidityAmount()": FunctionFragment;
+    "addOrder(uint256,uint256)": FunctionFragment;
     "buyAcdm()": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
+    "orders(uint256)": FunctionFragment;
+    "redeemOrder(uint256)": FunctionFragment;
+    "referralRewardBank()": FunctionFragment;
     "refers(address)": FunctionFragment;
     "register(address)": FunctionFragment;
     "registered(address)": FunctionFragment;
+    "removeOrder(uint256)": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
-    "setReffer1RewardPercent(uint256)": FunctionFragment;
-    "setReffer2RewardPercent(uint256)": FunctionFragment;
-    "startPLatform()": FunctionFragment;
+    "setSaleRoundReferRewards(uint256,uint256)": FunctionFragment;
+    "setTradeRoundReferRewards(uint256,uint256)": FunctionFragment;
+    "startPlatform()": FunctionFragment;
     "startSaleRound()": FunctionFragment;
     "startTradeRound()": FunctionFragment;
     "status()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
+    "withdraw()": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "DAO", values?: undefined): string;
@@ -49,8 +54,8 @@ interface ACDMplatformInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "acdmLiquidityAmount",
-    values?: undefined
+    functionFragment: "addOrder",
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "buyAcdm", values?: undefined): string;
   encodeFunctionData(
@@ -65,9 +70,25 @@ interface ACDMplatformInterface extends ethers.utils.Interface {
     functionFragment: "hasRole",
     values: [BytesLike, string]
   ): string;
+  encodeFunctionData(
+    functionFragment: "orders",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "redeemOrder",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "referralRewardBank",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "refers", values: [string]): string;
   encodeFunctionData(functionFragment: "register", values: [string]): string;
   encodeFunctionData(functionFragment: "registered", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "removeOrder",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "renounceRole",
     values: [BytesLike, string]
@@ -77,15 +98,15 @@ interface ACDMplatformInterface extends ethers.utils.Interface {
     values: [BytesLike, string]
   ): string;
   encodeFunctionData(
-    functionFragment: "setReffer1RewardPercent",
-    values: [BigNumberish]
+    functionFragment: "setSaleRoundReferRewards",
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "setReffer2RewardPercent",
-    values: [BigNumberish]
+    functionFragment: "setTradeRoundReferRewards",
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "startPLatform",
+    functionFragment: "startPlatform",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -101,16 +122,14 @@ interface ACDMplatformInterface extends ethers.utils.Interface {
     functionFragment: "supportsInterface",
     values: [BytesLike]
   ): string;
+  encodeFunctionData(functionFragment: "withdraw", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "DAO", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "DEFAULT_ADMIN_ROLE",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "acdmLiquidityAmount",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "addOrder", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "buyAcdm", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getRoleAdmin",
@@ -118,24 +137,37 @@ interface ACDMplatformInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "orders", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "redeemOrder",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "referralRewardBank",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "refers", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "register", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "registered", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "removeOrder",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "renounceRole",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "setReffer1RewardPercent",
+    functionFragment: "setSaleRoundReferRewards",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setReffer2RewardPercent",
+    functionFragment: "setTradeRoundReferRewards",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "startPLatform",
+    functionFragment: "startPlatform",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -151,17 +183,42 @@ interface ACDMplatformInterface extends ethers.utils.Interface {
     functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
 
   events: {
+    "OrderExecuted(uint256)": EventFragment;
+    "OrderPlaced(uint256,uint256,uint256)": EventFragment;
+    "OrderRemoved(uint256)": EventFragment;
+    "OrderUpdated(uint256,uint256)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "OrderExecuted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OrderPlaced"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OrderRemoved"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OrderUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
 }
+
+export type OrderExecutedEvent = TypedEvent<[BigNumber] & { _id: BigNumber }>;
+
+export type OrderPlacedEvent = TypedEvent<
+  [BigNumber, BigNumber, BigNumber] & {
+    id: BigNumber;
+    amount: BigNumber;
+    price: BigNumber;
+  }
+>;
+
+export type OrderRemovedEvent = TypedEvent<[BigNumber] & { _id: BigNumber }>;
+
+export type OrderUpdatedEvent = TypedEvent<
+  [BigNumber, BigNumber] & { _id: BigNumber; amount: BigNumber }
+>;
 
 export type RoleAdminChangedEvent = TypedEvent<
   [string, string, string] & {
@@ -227,7 +284,11 @@ export class ACDMplatform extends BaseContract {
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    acdmLiquidityAmount(overrides?: CallOverrides): Promise<[BigNumber]>;
+    addOrder(
+      _amount: BigNumberish,
+      _price: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     buyAcdm(
       overrides?: PayableOverrides & { from?: string | Promise<string> }
@@ -247,6 +308,25 @@ export class ACDMplatform extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    orders(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [boolean, string, BigNumber, BigNumber] & {
+        executed: boolean;
+        seller: string;
+        amount: BigNumber;
+        price: BigNumber;
+      }
+    >;
+
+    redeemOrder(
+      _id: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    referralRewardBank(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     refers(arg0: string, overrides?: CallOverrides): Promise<[string]>;
 
     register(
@@ -255,6 +335,11 @@ export class ACDMplatform extends BaseContract {
     ): Promise<ContractTransaction>;
 
     registered(arg0: string, overrides?: CallOverrides): Promise<[boolean]>;
+
+    removeOrder(
+      _id: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     renounceRole(
       role: BytesLike,
@@ -268,17 +353,19 @@ export class ACDMplatform extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setReffer1RewardPercent(
-      _newPercent: BigNumberish,
+    setSaleRoundReferRewards(
+      _newPercent1: BigNumberish,
+      _newPercent2: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setReffer2RewardPercent(
-      _newPercent: BigNumberish,
+    setTradeRoundReferRewards(
+      _newPercent1: BigNumberish,
+      _newPercent2: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    startPLatform(
+    startPlatform(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -296,13 +383,21 @@ export class ACDMplatform extends BaseContract {
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    withdraw(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
   DAO(overrides?: CallOverrides): Promise<string>;
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-  acdmLiquidityAmount(overrides?: CallOverrides): Promise<BigNumber>;
+  addOrder(
+    _amount: BigNumberish,
+    _price: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   buyAcdm(
     overrides?: PayableOverrides & { from?: string | Promise<string> }
@@ -322,6 +417,25 @@ export class ACDMplatform extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  orders(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [boolean, string, BigNumber, BigNumber] & {
+      executed: boolean;
+      seller: string;
+      amount: BigNumber;
+      price: BigNumber;
+    }
+  >;
+
+  redeemOrder(
+    _id: BigNumberish,
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  referralRewardBank(overrides?: CallOverrides): Promise<BigNumber>;
+
   refers(arg0: string, overrides?: CallOverrides): Promise<string>;
 
   register(
@@ -330,6 +444,11 @@ export class ACDMplatform extends BaseContract {
   ): Promise<ContractTransaction>;
 
   registered(arg0: string, overrides?: CallOverrides): Promise<boolean>;
+
+  removeOrder(
+    _id: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   renounceRole(
     role: BytesLike,
@@ -343,17 +462,19 @@ export class ACDMplatform extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setReffer1RewardPercent(
-    _newPercent: BigNumberish,
+  setSaleRoundReferRewards(
+    _newPercent1: BigNumberish,
+    _newPercent2: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setReffer2RewardPercent(
-    _newPercent: BigNumberish,
+  setTradeRoundReferRewards(
+    _newPercent1: BigNumberish,
+    _newPercent2: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  startPLatform(
+  startPlatform(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -372,12 +493,20 @@ export class ACDMplatform extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  withdraw(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     DAO(overrides?: CallOverrides): Promise<string>;
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    acdmLiquidityAmount(overrides?: CallOverrides): Promise<BigNumber>;
+    addOrder(
+      _amount: BigNumberish,
+      _price: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     buyAcdm(overrides?: CallOverrides): Promise<void>;
 
@@ -395,11 +524,29 @@ export class ACDMplatform extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    orders(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [boolean, string, BigNumber, BigNumber] & {
+        executed: boolean;
+        seller: string;
+        amount: BigNumber;
+        price: BigNumber;
+      }
+    >;
+
+    redeemOrder(_id: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
+    referralRewardBank(overrides?: CallOverrides): Promise<BigNumber>;
+
     refers(arg0: string, overrides?: CallOverrides): Promise<string>;
 
     register(_refer: string, overrides?: CallOverrides): Promise<void>;
 
     registered(arg0: string, overrides?: CallOverrides): Promise<boolean>;
+
+    removeOrder(_id: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
     renounceRole(
       role: BytesLike,
@@ -413,17 +560,19 @@ export class ACDMplatform extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setReffer1RewardPercent(
-      _newPercent: BigNumberish,
+    setSaleRoundReferRewards(
+      _newPercent1: BigNumberish,
+      _newPercent2: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setReffer2RewardPercent(
-      _newPercent: BigNumberish,
+    setTradeRoundReferRewards(
+      _newPercent1: BigNumberish,
+      _newPercent2: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    startPLatform(overrides?: CallOverrides): Promise<void>;
+    startPlatform(overrides?: CallOverrides): Promise<void>;
 
     startSaleRound(overrides?: CallOverrides): Promise<void>;
 
@@ -435,9 +584,59 @@ export class ACDMplatform extends BaseContract {
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    withdraw(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {
+    "OrderExecuted(uint256)"(
+      _id?: null
+    ): TypedEventFilter<[BigNumber], { _id: BigNumber }>;
+
+    OrderExecuted(
+      _id?: null
+    ): TypedEventFilter<[BigNumber], { _id: BigNumber }>;
+
+    "OrderPlaced(uint256,uint256,uint256)"(
+      id?: null,
+      amount?: null,
+      price?: null
+    ): TypedEventFilter<
+      [BigNumber, BigNumber, BigNumber],
+      { id: BigNumber; amount: BigNumber; price: BigNumber }
+    >;
+
+    OrderPlaced(
+      id?: null,
+      amount?: null,
+      price?: null
+    ): TypedEventFilter<
+      [BigNumber, BigNumber, BigNumber],
+      { id: BigNumber; amount: BigNumber; price: BigNumber }
+    >;
+
+    "OrderRemoved(uint256)"(
+      _id?: null
+    ): TypedEventFilter<[BigNumber], { _id: BigNumber }>;
+
+    OrderRemoved(_id?: null): TypedEventFilter<[BigNumber], { _id: BigNumber }>;
+
+    "OrderUpdated(uint256,uint256)"(
+      _id?: null,
+      amount?: null
+    ): TypedEventFilter<
+      [BigNumber, BigNumber],
+      { _id: BigNumber; amount: BigNumber }
+    >;
+
+    OrderUpdated(
+      _id?: null,
+      amount?: null
+    ): TypedEventFilter<
+      [BigNumber, BigNumber],
+      { _id: BigNumber; amount: BigNumber }
+    >;
+
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
       role?: BytesLike | null,
       previousAdminRole?: BytesLike | null,
@@ -498,7 +697,11 @@ export class ACDMplatform extends BaseContract {
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    acdmLiquidityAmount(overrides?: CallOverrides): Promise<BigNumber>;
+    addOrder(
+      _amount: BigNumberish,
+      _price: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     buyAcdm(
       overrides?: PayableOverrides & { from?: string | Promise<string> }
@@ -521,6 +724,15 @@ export class ACDMplatform extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    orders(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+    redeemOrder(
+      _id: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    referralRewardBank(overrides?: CallOverrides): Promise<BigNumber>;
+
     refers(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     register(
@@ -529,6 +741,11 @@ export class ACDMplatform extends BaseContract {
     ): Promise<BigNumber>;
 
     registered(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    removeOrder(
+      _id: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     renounceRole(
       role: BytesLike,
@@ -542,17 +759,19 @@ export class ACDMplatform extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setReffer1RewardPercent(
-      _newPercent: BigNumberish,
+    setSaleRoundReferRewards(
+      _newPercent1: BigNumberish,
+      _newPercent2: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setReffer2RewardPercent(
-      _newPercent: BigNumberish,
+    setTradeRoundReferRewards(
+      _newPercent1: BigNumberish,
+      _newPercent2: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    startPLatform(
+    startPlatform(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -570,6 +789,10 @@ export class ACDMplatform extends BaseContract {
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    withdraw(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -579,8 +802,10 @@ export class ACDMplatform extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    acdmLiquidityAmount(
-      overrides?: CallOverrides
+    addOrder(
+      _amount: BigNumberish,
+      _price: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     buyAcdm(
@@ -601,6 +826,20 @@ export class ACDMplatform extends BaseContract {
     hasRole(
       role: BytesLike,
       account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    orders(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    redeemOrder(
+      _id: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    referralRewardBank(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -619,6 +858,11 @@ export class ACDMplatform extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    removeOrder(
+      _id: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     renounceRole(
       role: BytesLike,
       account: string,
@@ -631,17 +875,19 @@ export class ACDMplatform extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setReffer1RewardPercent(
-      _newPercent: BigNumberish,
+    setSaleRoundReferRewards(
+      _newPercent1: BigNumberish,
+      _newPercent2: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setReffer2RewardPercent(
-      _newPercent: BigNumberish,
+    setTradeRoundReferRewards(
+      _newPercent1: BigNumberish,
+      _newPercent2: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    startPLatform(
+    startPlatform(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -658,6 +904,10 @@ export class ACDMplatform extends BaseContract {
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    withdraw(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

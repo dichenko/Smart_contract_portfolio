@@ -49,7 +49,7 @@ contract DAO is AccessControl {
 
     /// @notice Sets staking address, only default admin, only once
     /// @param _stakingAddress address of staking contract
-    function setStaking(address _stakingAddress)
+    function setupStaking(address _stakingAddress)
         external
         onlyRole(DEFAULT_ADMIN_ROLE)
     {

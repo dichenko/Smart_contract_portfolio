@@ -591,8 +591,8 @@
       ]
     },
     "C:\\Users\\user\\Documents\\GitHub\\Smart_contract_portfolio\\08_ACDM\\contracts\\Staking.sol": {
-      "lastModificationDate": 1659335607328,
-      "contentHash": "ba7e49759afb0168f10e1c162e39d844",
+      "lastModificationDate": 1659450109887,
+      "contentHash": "9bf25555efa165d973661c3469149630",
       "sourceName": "contracts/Staking.sol",
       "solcConfig": {
         "version": "0.8.15",
@@ -670,8 +670,8 @@
       ]
     },
     "C:\\Users\\user\\Documents\\GitHub\\Smart_contract_portfolio\\08_ACDM\\contracts\\ACDMPlatform.sol": {
-      "lastModificationDate": 1659415853386,
-      "contentHash": "a18031e6fa5d6bfb35a7672e347e52b7",
+      "lastModificationDate": 1659449399209,
+      "contentHash": "072582c328195ab3222f060f81248003",
       "sourceName": "contracts/ACDMPlatform.sol",
       "solcConfig": {
         "version": "0.8.15",

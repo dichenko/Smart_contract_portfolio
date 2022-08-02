@@ -31,9 +31,8 @@ interface StakingInterface extends ethers.utils.Interface {
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "rewardPercent()": FunctionFragment;
-    "setDao(address)": FunctionFragment;
-    "setDaoAddress(address)": FunctionFragment;
     "setTimeToLockLp(uint256)": FunctionFragment;
+    "setupDao(address)": FunctionFragment;
     "stake(uint256)": FunctionFragment;
     "stakeAmount(address)": FunctionFragment;
     "stakes(address)": FunctionFragment;
@@ -77,15 +76,11 @@ interface StakingInterface extends ethers.utils.Interface {
     functionFragment: "rewardPercent",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "setDao", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "setDaoAddress",
-    values: [string]
-  ): string;
   encodeFunctionData(
     functionFragment: "setTimeToLockLp",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "setupDao", values: [string]): string;
   encodeFunctionData(functionFragment: "stake", values: [BigNumberish]): string;
   encodeFunctionData(functionFragment: "stakeAmount", values: [string]): string;
   encodeFunctionData(functionFragment: "stakes", values: [string]): string;
@@ -125,15 +120,11 @@ interface StakingInterface extends ethers.utils.Interface {
     functionFragment: "rewardPercent",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "setDao", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "setDaoAddress",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "setTimeToLockLp",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setupDao", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "stake", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "stakeAmount",
@@ -275,18 +266,13 @@ export class Staking extends BaseContract {
 
     rewardPercent(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    setDao(
-      _daoAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setDaoAddress(
-      _daoAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     setTimeToLockLp(
       _time: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setupDao(
+      _daoAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -363,18 +349,13 @@ export class Staking extends BaseContract {
 
   rewardPercent(overrides?: CallOverrides): Promise<BigNumber>;
 
-  setDao(
-    _daoAddress: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setDaoAddress(
-    _daoAddress: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   setTimeToLockLp(
     _time: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setupDao(
+    _daoAddress: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -446,17 +427,12 @@ export class Staking extends BaseContract {
 
     rewardPercent(overrides?: CallOverrides): Promise<BigNumber>;
 
-    setDao(_daoAddress: string, overrides?: CallOverrides): Promise<void>;
-
-    setDaoAddress(
-      _daoAddress: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     setTimeToLockLp(
       _time: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    setupDao(_daoAddress: string, overrides?: CallOverrides): Promise<void>;
 
     stake(_amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
@@ -615,18 +591,13 @@ export class Staking extends BaseContract {
 
     rewardPercent(overrides?: CallOverrides): Promise<BigNumber>;
 
-    setDao(
-      _daoAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setDaoAddress(
-      _daoAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     setTimeToLockLp(
       _time: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setupDao(
+      _daoAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -697,18 +668,13 @@ export class Staking extends BaseContract {
 
     rewardPercent(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    setDao(
-      _daoAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setDaoAddress(
-      _daoAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     setTimeToLockLp(
       _time: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setupDao(
+      _daoAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
