@@ -20,9 +20,11 @@ contract ACDMplatform is AccessControl {
     bytes32 public constant DAO = keccak256("DAO");
     bool started;
     IACDM_TOKEN acdmToken;
-    uint[2] referRewards = [5, 3];
-    uint commonRefferPercent = 8;
-    uint public referalRewardBank;
+    uint[2] saleRoundReferRewards = [50, 30];
+    uint[2] tradeRoundReferRewards = [25, 25];
+    uint commonSaleRoundReferPercent = 80;
+    uint commonTradeRoundReferPercent = 50;
+    uint public referralRewardBank;
     uint roundDuration = 3 days;
     uint tradeRoundVolume = 1 ether;
     uint lastPrice = 10000000;
@@ -88,9 +90,11 @@ contract ACDMplatform is AccessControl {
         );
         require(msg.value > lastPrice, "Not enough ether to buy token");
         acdmToken.transfer(msg.sender, msg.value / lastPrice);
+        _transferSaleRefferReward(msg.sender, msg.value);
     }
 
-    function startSaleRound() external {
+    function startSaleRound() external onlyTradeRound {
+       require(lastRoundStartTime + 3 days <= block.timestamp, "Trade round is not over yet");
         status = Status.Sale;
         //TODO
     }
@@ -109,13 +113,15 @@ contract ACDMplatform is AccessControl {
 
     ///@notice Add order during Trade Round
     function addOrder(uint _amount, uint _price) external onlyTradeRound {
+        require(lastRoundStartTime + 3 days >= block.timestamp, "Trade round time is over");
         acdmToken.transferFrom(msg.sender, address(this), _amount);
-        orders.push(Order(false, msg.sender, _amount, _price));
+        orders.push(Order(false, payable(msg.sender), _amount, _price));
         emit OrderPlaced(orders.length - 1, _amount, _price);
     }
 
     ///@notice redeem order during the Trade Round
     function redeemOrder(uint _id) external payable onlyTradeRound {
+        require(lastRoundStartTime + 3 days >= block.timestamp, "Trade round time is over");
         Order storage order = orders[_id];
         require(!order.executed, "Order executed");
         uint amount = msg.value / order.price;
@@ -129,12 +135,13 @@ contract ACDMplatform is AccessControl {
             emit OrderUpdated(_id, order.amount);
         }
         tradeRoundVolume += amount;
-        payable(order.seller).transfer(msg.value * (100 - commonRefferPercent) / 100);
-        _transferRefferReward(order.seller, msg.value);
+        payable(order.seller).transfer(msg.value * (1000 - commonTradeRoundReferPercent) / 1000);
+        _transferTradeeReferReward(order.seller, msg.value);
     }
 
     ///@notice remove caller's order
     function removeOrder(uint _id) external onlyTradeRound{
+        require(lastRoundStartTime + 3 days >= block.timestamp, "Trade round time is over");
         Order storage order = orders[_id];
         require(order.seller == msg.sender, "You are not a seller");
         order.executed = true;
@@ -150,22 +157,29 @@ contract ACDMplatform is AccessControl {
     }
 
     ///@notice  deposit reffer rewards. Method called after each trade transaction.
-    function _transferRefferReward(address _iniciator, uint _value) private {
+    function _transferSaleReferReward(address _iniciator, uint _value) private {
         ///@TODO
         ///@TODO Check if user trade with its reffer - he should not get reward
         ///initiator can't get reward
     }
 
-    ///@notice DAO sets new reward percent for level 1 reffer
-    function setReffer1RewardPercent(uint _newPercent) external onlyRole(DAO) {
-        referRewards[0] = _newPercent;
-        commonRefferPercent = _newPercent + referRewards[1];
+     function _transferTradeeReferReward(address _iniciator, uint _value) private {
+        ///@TODO
+        ///@TODO Check if user trade with its reffer - he should not get reward
+        ///initiator can't get reward
     }
 
-    ///@notice DAO sets new reward percent for level 2 reffer
-    function setReffer2RewardPercent(uint _newPercent) external onlyRole(DAO) {
-        referRewards[1] = _newPercent;
-        commonRefferPercent = _newPercent + referRewards[0];
+    ///@notice Sets new percent rate for reffer rewards
+    function setSaleRoundReferRewards(uint _newPercent1, uint _newPercent2) external onlyRole(DAO) {
+        saleRoundReferRewards[0] = _newPercent1;
+        saleRoundReferRewards[1] = _newPercent2;
+        commonSaleRoundReferPercent = _newPercent1 + _newPercent2;
+    }
+
+     function setTradeRoundReferRewards(uint _newPercent1, uint _newPercent2) external onlyRole(DAO) {
+        tradeRoundReferRewards[0] = _newPercent1;
+        tradeRoundReferRewards[1] = _newPercent2;
+        commonTradeRoundReferPercent = _newPercent1 + _newPercent2;
     }
 
     ///@notice Change token price every saleRound
