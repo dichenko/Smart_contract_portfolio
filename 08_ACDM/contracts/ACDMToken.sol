@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 
-contract ACADMToken is ERC20, AccessControl, ERC20Burnable {
+contract ACDMToken is ERC20, AccessControl, ERC20Burnable {
     bytes32 public constant MINTER_BURNER = keccak256("MINTER_BURNER");
 
     constructor() ERC20("ACADM Coin", "ACDM") {

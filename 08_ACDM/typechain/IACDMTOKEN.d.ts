@@ -23,6 +23,7 @@ interface IACDMTOKENInterface extends ethers.utils.Interface {
   functions: {
     "balanceOf(address)": FunctionFragment;
     "burn(uint256)": FunctionFragment;
+    "decimals()": FunctionFragment;
     "mint(uint256)": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
@@ -30,6 +31,7 @@ interface IACDMTOKENInterface extends ethers.utils.Interface {
 
   encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
   encodeFunctionData(functionFragment: "burn", values: [BigNumberish]): string;
+  encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
   encodeFunctionData(functionFragment: "mint", values: [BigNumberish]): string;
   encodeFunctionData(
     functionFragment: "transfer",
@@ -42,6 +44,7 @@ interface IACDMTOKENInterface extends ethers.utils.Interface {
 
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "transfer", data: BytesLike): Result;
   decodeFunctionResult(
@@ -103,6 +106,10 @@ export class IACDMTOKEN extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    decimals(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     mint(
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -129,6 +136,10 @@ export class IACDMTOKEN extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  decimals(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   mint(
     _amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -151,6 +162,8 @@ export class IACDMTOKEN extends BaseContract {
     balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     burn(_amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
+    decimals(overrides?: CallOverrides): Promise<number>;
 
     mint(_amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
@@ -175,6 +188,10 @@ export class IACDMTOKEN extends BaseContract {
 
     burn(
       _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    decimals(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -205,6 +222,10 @@ export class IACDMTOKEN extends BaseContract {
 
     burn(
       _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    decimals(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

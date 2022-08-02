@@ -17,10 +17,11 @@ interface IACDM_TOKEN {
     function burn(uint _amount) external;
 
     function balanceOf(address account) external view returns (uint256);
-    //function decimals() external returns (uint8);
+
+    function decimals() external returns (uint8);
 }
 
-contract ACDMplatform is AccessControl {
+contract ACDMPlatform is AccessControl {
     bytes32 public constant DAO = keccak256("DAO");
 
     bool started;
@@ -74,7 +75,7 @@ contract ACDMplatform is AccessControl {
     constructor(address _acdmToken) {
         acdmToken = IACDM_TOKEN(_acdmToken);
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        //acdmTokenDecimals = acdmToken.decimals();
+        registered[msg.sender] = true;
     }
 
     ///@notice Start platform and first sale round
@@ -82,7 +83,7 @@ contract ACDMplatform is AccessControl {
         require(status == Status.Pending, "Already started");
 
         roundStartTime = block.timestamp;
-        acdmToken.mint(acdmEmission);
+        acdmToken.mint(acdmEmission * 10**acdmToken.decimals());
         status = Status.Sale;
     }
 
@@ -104,7 +105,7 @@ contract ACDMplatform is AccessControl {
         );
         _updateTokenPrice();
         acdmEmission = tradeRoundVolume / lastPrice;
-        acdmToken.mint(acdmEmission);
+        acdmToken.mint(acdmEmission * 10**acdmToken.decimals());
         roundStartTime = block.timestamp;
         status = Status.Sale;
     }

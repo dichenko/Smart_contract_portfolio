@@ -20,7 +20,7 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
-interface ACDMplatformInterface extends ethers.utils.Interface {
+interface ACDMPlatformInterface extends ethers.utils.Interface {
   functions: {
     "DAO()": FunctionFragment;
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
@@ -236,7 +236,7 @@ export type RoleRevokedEvent = TypedEvent<
   [string, string, string] & { role: string; account: string; sender: string }
 >;
 
-export class ACDMplatform extends BaseContract {
+export class ACDMPlatform extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -277,7 +277,7 @@ export class ACDMplatform extends BaseContract {
     toBlock?: string | number | undefined
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
-  interface: ACDMplatformInterface;
+  interface: ACDMPlatformInterface;
 
   functions: {
     DAO(overrides?: CallOverrides): Promise<[string]>;
