@@ -22,6 +22,7 @@ interface IACDM_TOKEN {
 
 contract ACDMplatform is AccessControl {
     bytes32 public constant DAO = keccak256("DAO");
+
     bool started;
     IACDM_TOKEN acdmToken;
     uint[2] saleRoundReferRewards = [50, 30];
@@ -77,7 +78,7 @@ contract ACDMplatform is AccessControl {
     }
 
     ///@notice Start platform and first sale round
-    function startPLatform() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function startPlatform() external onlyRole(DEFAULT_ADMIN_ROLE) {
         require(status == Status.Pending, "Already started");
 
         roundStartTime = block.timestamp;
@@ -176,19 +177,34 @@ contract ACDMplatform is AccessControl {
         refers[msg.sender] = _refer;
     }
 
-    ///@notice  deposit reffer rewards. Method called after each trade transaction.
+    ///@notice  Deposits reffer rewards. Method called after each sale transaction.
     function _transferSaleReferReward(address _iniciator, uint _value) private {
-        ///@TODO
-        ///@TODO Check if user trade with its reffer - he should not get reward
-        ///initiator can't get reward
+        address currentRefer = refers[_iniciator];
+        for (uint i = 0; i < saleRoundReferRewards.length; i++) {
+            uint reward = (_value * saleRoundReferRewards[i]) / 1000;
+            if ((currentRefer != _iniciator) && (currentRefer != address(0))) {
+                payable(currentRefer).transfer(reward);
+            } else {
+                referralRewardBank += reward;
+            }
+            currentRefer = refers[currentRefer];
+        }
     }
 
+    ///@notice  Deposits reffer rewards. Method called after each trade transaction.
     function _transferTradeeReferReward(address _iniciator, uint _value)
         private
     {
-        ///@TODO
-        ///@TODO Check if user trade with its reffer - he should not get reward
-        ///initiator can't get reward
+        address currentRefer = refers[_iniciator];
+        for (uint i = 0; i < tradeRoundReferRewards.length; i++) {
+            uint reward = (_value * tradeRoundReferRewards[i]) / 1000;
+            if ((currentRefer != _iniciator) && (currentRefer != address(0))) {
+                payable(currentRefer).transfer(reward);
+            } else {
+                referralRewardBank += reward;
+            }
+            currentRefer = refers[currentRefer];
+        }
     }
 
     ///@notice Sets new percent rate for reffer rewards in sale round
