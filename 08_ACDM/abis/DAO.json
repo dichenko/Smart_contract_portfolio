@@ -17,7 +17,7 @@
   "function quorumPercent() view returns (uint256)",
   "function renounceRole(bytes32,address)",
   "function revokeRole(bytes32,address)",
-  "function setStaking(address)",
+  "function setupStaking(address)",
   "function stakingAddress() view returns (address)",
   "function supportsInterface(bytes4) view returns (bool)",
   "function unlockTime(address) view returns (uint256)",

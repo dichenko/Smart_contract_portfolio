@@ -32,7 +32,7 @@ interface DAOInterface extends ethers.utils.Interface {
     "quorumPercent()": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
-    "setStaking(address)": FunctionFragment;
+    "setupStaking(address)": FunctionFragment;
     "stakingAddress()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "unlockTime(address)": FunctionFragment;
@@ -81,7 +81,10 @@ interface DAOInterface extends ethers.utils.Interface {
     functionFragment: "revokeRole",
     values: [BytesLike, string]
   ): string;
-  encodeFunctionData(functionFragment: "setStaking", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "setupStaking",
+    values: [string]
+  ): string;
   encodeFunctionData(
     functionFragment: "stakingAddress",
     values?: undefined
@@ -129,7 +132,10 @@ interface DAOInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "setStaking", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setupStaking",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "stakingAddress",
     data: BytesLike
@@ -286,7 +292,7 @@ export class DAO extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setStaking(
+    setupStaking(
       _stakingAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -365,7 +371,7 @@ export class DAO extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setStaking(
+  setupStaking(
     _stakingAddress: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -441,7 +447,7 @@ export class DAO extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setStaking(
+    setupStaking(
       _stakingAddress: string,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -646,7 +652,7 @@ export class DAO extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setStaking(
+    setupStaking(
       _stakingAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -720,7 +726,7 @@ export class DAO extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setStaking(
+    setupStaking(
       _stakingAddress: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

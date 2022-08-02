@@ -1,0 +1,785 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for contracts\ACDMPlatform.sol</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../index.html">all files</a> / <a href="index.html">contracts/</a> ACDMPlatform.sol
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>0/72</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>0/34</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>0/17</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>0/74</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">//SPDX-License-Identifier: Unlicense
+pragma solidity 0.8.15;
+&nbsp;
+import "@openzeppelin/contracts/access/AccessControl.sol";
+&nbsp;
+interface IACDM_TOKEN {
+    function mint(uint256 _amount) external;
+&nbsp;
+    function transfer(address to, uint256 amount) external returns (bool);
+&nbsp;
+    function transferFrom(
+        address from,
+        address to,
+        uint256 amount
+    ) external returns (bool);
+&nbsp;
+    function burn(uint _amount) external;
+&nbsp;
+    function balanceOf(address account) external view returns (uint256);
+    //function decimals() external returns (uint8);
+}
+&nbsp;
+contract ACDMplatform is AccessControl {
+    bytes32 public constant DAO = keccak256("DAO");
+&nbsp;
+    bool started;
+    IACDM_TOKEN acdmToken;
+    uint[2] saleRoundReferRewards = [50, 30];
+    uint[2] tradeRoundReferRewards = [25, 25];
+    uint commonSaleRoundReferPercent = 80;
+    uint commonTradeRoundReferPercent = 50;
+    uint public referralRewardBank;
+    uint roundDuration = 3 days;
+    uint tradeRoundVolume = 1 ether;
+    uint lastPrice = 10000000;
+    uint acdmEmission = 100000;
+    uint roundStartTime;
+    uint acdmTokenDecimals;
+&nbsp;
+    struct Order {
+        bool executed;
+        address payable seller;
+        uint amount;
+        uint price;
+    }
+&nbsp;
+    Order[] public orders;
+&nbsp;
+    event OrderPlaced(uint id, uint amount, uint price);
+    event OrderExecuted(uint _id);
+    event OrderUpdated(uint _id, uint amount);
+    event OrderRemoved(uint _id);
+&nbsp;
+    enum Status {
+        Pending,
+        Sale,
+        Trade
+    }
+&nbsp;
+    Status public status;
+&nbsp;
+    mapping(address =&gt; address) public refers;
+    mapping(address =&gt; bool) public registered;
+&nbsp;
+<span class="fstat-no" title="function not covered" >    modifier onlySaleRound() {</span>
+<span class="cstat-no" title="statement not covered" >        require(status == Status.Sale, "Not sale round")</span>;
+        _;
+    }
+<span class="fstat-no" title="function not covered" >    modifier onlyTradeRound() {</span>
+<span class="cstat-no" title="statement not covered" >        require(status == Status.Trade, "Not trade round")</span>;
+        _;
+    }
+&nbsp;
+<span class="fstat-no" title="function not covered" >    constructor(address _acdmToken) {</span>
+<span class="cstat-no" title="statement not covered" >        acdmToken = IACDM_TOKEN(_acdmToken)</span>;
+<span class="cstat-no" title="statement not covered" >        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender)</span>;
+        //acdmTokenDecimals = acdmToken.decimals();
+    }
+&nbsp;
+    ///@notice Start platform and first sale round
+<span class="fstat-no" title="function not covered" >    function startPlatform() external onlyRole(DEFAULT_ADMIN_ROLE) {</span>
+<span class="cstat-no" title="statement not covered" >        require(status == Status.Pending, "Already started")</span>;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        roundStartTime = block.timestamp</span>;
+<span class="cstat-no" title="statement not covered" >        acdmToken.mint(acdmEmission)</span>;
+<span class="cstat-no" title="statement not covered" >        status = Status.Sale</span>;
+    }
+&nbsp;
+    ///@notice Buy acdm token with ETH during Sale round
+<span class="fstat-no" title="function not covered" >    function buyAcdm() external payable onlySaleRound {</span>
+<span class="cstat-no" title="statement not covered" >        require(</span>
+            roundStartTime + 3 days &gt;= block.timestamp,
+            "Sale round time expired"
+        );
+<span class="cstat-no" title="statement not covered" >        require(msg.value &gt; lastPrice, "Not enough ether to buy token")</span>;
+<span class="cstat-no" title="statement not covered" >        acdmToken.transfer(msg.sender, msg.value / lastPrice)</span>;
+<span class="cstat-no" title="statement not covered" >        _transferSaleReferReward(msg.sender, msg.value)</span>;
+    }
+&nbsp;
+<span class="fstat-no" title="function not covered" >    function startSaleRound() external onlyTradeRound {</span>
+<span class="cstat-no" title="statement not covered" >        require(</span>
+            roundStartTime + 3 days &lt;= block.timestamp,
+            "Trade round is not over yet"
+        );
+<span class="cstat-no" title="statement not covered" >        _updateTokenPrice()</span>;
+<span class="cstat-no" title="statement not covered" >        acdmEmission = tradeRoundVolume / lastPrice</span>;
+<span class="cstat-no" title="statement not covered" >        acdmToken.mint(acdmEmission)</span>;
+<span class="cstat-no" title="statement not covered" >        roundStartTime = block.timestamp</span>;
+<span class="cstat-no" title="statement not covered" >        status = Status.Sale</span>;
+    }
+&nbsp;
+    ///@notice Starts trade round if sale round time expired or sold out
+<span class="fstat-no" title="function not covered" >    function startTradeRound() external onlySaleRound {</span>
+<span class="cstat-no" title="statement not covered" >        require(</span>
+            ((roundStartTime + 3 days &lt;= block.timestamp) ||
+                (acdmToken.balanceOf(address(this)) == 0)),
+            "Sale round is not over yet"
+        );
+<span class="cstat-no" title="statement not covered" >        tradeRoundVolume = 0</span>;
+<span class="cstat-no" title="statement not covered" >        roundStartTime = block.timestamp</span>;
+<span class="cstat-no" title="statement not covered" >        status = Status.Trade</span>;
+    }
+&nbsp;
+    ///@notice Add order during Trade Round
+<span class="fstat-no" title="function not covered" >    function addOrder(uint _amount, uint _price) external onlyTradeRound {</span>
+<span class="cstat-no" title="statement not covered" >        require(</span>
+            roundStartTime + 3 days &gt;= block.timestamp,
+            "Trade round time is over"
+        );
+<span class="cstat-no" title="statement not covered" >        acdmToken.transferFrom(msg.sender, address(this), _amount)</span>;
+<span class="cstat-no" title="statement not covered" >        orders.push(Order(false, payable(msg.sender), _amount, _price))</span>;
+<span class="cstat-no" title="statement not covered" >        emit OrderPlaced(orders.length - 1, _amount, _price);</span>
+    }
+&nbsp;
+    ///@notice redeem order during the Trade Round
+<span class="fstat-no" title="function not covered" >    function redeemOrder(uint _id) external payable onlyTradeRound {</span>
+<span class="cstat-no" title="statement not covered" >        require(</span>
+            roundStartTime + 3 days &gt;= block.timestamp,
+            "Trade round time is over"
+        );
+<span class="cstat-no" title="statement not covered" >        Order storage order = orders[_id];</span>
+<span class="cstat-no" title="statement not covered" >        require(!order.executed, "Order executed")</span>;
+<span class="cstat-no" title="statement not covered" >        uint amount = msg.value / order.price;</span>
+<span class="cstat-no" title="statement not covered" >        require(order.amount &gt;= amount, "Not enough tokens")</span>;
+<span class="cstat-no" title="statement not covered" >        acdmToken.transfer(msg.sender, amount)</span>;
+<span class="cstat-no" title="statement not covered" >        order.amount -= amount</span>;
+<span class="cstat-no" title="statement not covered" >        if (order.amount == 0) {</span>
+<span class="cstat-no" title="statement not covered" >            order.executed = true</span>;
+<span class="cstat-no" title="statement not covered" >            emit OrderExecuted(_id);</span>
+        } else {
+<span class="cstat-no" title="statement not covered" >            emit OrderUpdated(_id, order.amount);</span>
+        }
+<span class="cstat-no" title="statement not covered" >        tradeRoundVolume += amount</span>;
+<span class="cstat-no" title="statement not covered" >        payable(order.seller).transfer(</span>
+            (msg.value * (1000 - commonTradeRoundReferPercent)) / 1000
+        );
+<span class="cstat-no" title="statement not covered" >        _transferTradeeReferReward(order.seller, msg.value)</span>;
+    }
+&nbsp;
+    ///@notice remove caller's order
+<span class="fstat-no" title="function not covered" >    function removeOrder(uint _id) external onlyTradeRound {</span>
+<span class="cstat-no" title="statement not covered" >        require(</span>
+            roundStartTime + 3 days &gt;= block.timestamp,
+            "Trade round time is over"
+        );
+<span class="cstat-no" title="statement not covered" >        Order storage order = orders[_id];</span>
+<span class="cstat-no" title="statement not covered" >        require(order.seller == msg.sender, "You are not a seller")</span>;
+<span class="cstat-no" title="statement not covered" >        order.executed = true</span>;
+<span class="cstat-no" title="statement not covered" >        acdmToken.transfer(msg.sender, order.amount)</span>;
+<span class="cstat-no" title="statement not covered" >        emit OrderRemoved(_id);</span>
+    }
+&nbsp;
+    ///@notice User registration
+<span class="fstat-no" title="function not covered" >    function register(address _refer) external {</span>
+<span class="cstat-no" title="statement not covered" >        require(registered[_refer], "Reffer not registered")</span>;
+<span class="cstat-no" title="statement not covered" >        registered[msg.sender] = true</span>;
+<span class="cstat-no" title="statement not covered" >        refers[msg.sender] = _refer</span>;
+    }
+&nbsp;
+    ///@notice  Deposits reffer rewards. Method called after each sale transaction.
+<span class="fstat-no" title="function not covered" >    function _transferSaleReferReward(address _iniciator, uint _value) private {</span>
+<span class="cstat-no" title="statement not covered" >        address currentRefer = refers[_iniciator];</span>
+<span class="cstat-no" title="statement not covered" >        for (uint i = 0; i &lt; saleRoundReferRewards.length; i++) {</span>
+<span class="cstat-no" title="statement not covered" >            uint reward = (_value * saleRoundReferRewards[i]) / 1000;</span>
+<span class="cstat-no" title="statement not covered" >            if ((currentRefer != _iniciator) &amp;&amp; (currentRefer != address(0))) {</span>
+<span class="cstat-no" title="statement not covered" >                payable(currentRefer).transfer(reward)</span>;
+            } else {
+<span class="cstat-no" title="statement not covered" >                referralRewardBank += reward</span>;
+            }
+<span class="cstat-no" title="statement not covered" >            currentRefer = refers[currentRefer]</span>;
+        }
+    }
+&nbsp;
+    ///@notice  Deposits reffer rewards. Method called after each trade transaction.
+<span class="fstat-no" title="function not covered" >    function _transferTradeeReferReward(address _iniciator, uint _value)</span>
+        private
+    {
+<span class="cstat-no" title="statement not covered" >        address currentRefer = refers[_iniciator];</span>
+<span class="cstat-no" title="statement not covered" >        for (uint i = 0; i &lt; tradeRoundReferRewards.length; i++) {</span>
+<span class="cstat-no" title="statement not covered" >            uint reward = (_value * tradeRoundReferRewards[i]) / 1000;</span>
+<span class="cstat-no" title="statement not covered" >            if ((currentRefer != _iniciator) &amp;&amp; (currentRefer != address(0))) {</span>
+<span class="cstat-no" title="statement not covered" >                payable(currentRefer).transfer(reward)</span>;
+            } else {
+<span class="cstat-no" title="statement not covered" >                referralRewardBank += reward</span>;
+            }
+<span class="cstat-no" title="statement not covered" >            currentRefer = refers[currentRefer]</span>;
+        }
+    }
+&nbsp;
+    ///@notice Sets new percent rate for reffer rewards in sale round
+<span class="fstat-no" title="function not covered" >    function setSaleRoundReferRewards(uint _newPercent1, uint _newPercent2)</span>
+        external
+        onlyRole(DAO)
+    {
+<span class="cstat-no" title="statement not covered" >        saleRoundReferRewards[0] = _newPercent1</span>;
+<span class="cstat-no" title="statement not covered" >        saleRoundReferRewards[1] = _newPercent2</span>;
+<span class="cstat-no" title="statement not covered" >        commonSaleRoundReferPercent = _newPercent1 + _newPercent2</span>;
+    }
+&nbsp;
+    ///@notice Sets new percent rate for reffer rewards in trade round
+<span class="fstat-no" title="function not covered" >    function setTradeRoundReferRewards(uint _newPercent1, uint _newPercent2)</span>
+        external
+        onlyRole(DAO)
+    {
+<span class="cstat-no" title="statement not covered" >        tradeRoundReferRewards[0] = _newPercent1</span>;
+<span class="cstat-no" title="statement not covered" >        tradeRoundReferRewards[1] = _newPercent2</span>;
+<span class="cstat-no" title="statement not covered" >        commonTradeRoundReferPercent = _newPercent1 + _newPercent2</span>;
+    }
+&nbsp;
+    ///@notice Change token price every saleRound
+<span class="fstat-no" title="function not covered" >    function _updateTokenPrice() private {</span>
+<span class="cstat-no" title="statement not covered" >        lastPrice = (lastPrice * 103) / 100 + 4000000000000</span>;
+        //@FIX
+    }
+&nbsp;
+<span class="fstat-no" title="function not covered" >    function withdraw() external onlyRole(DEFAULT_ADMIN_ROLE) {</span>
+<span class="cstat-no" title="statement not covered" >        uint balanceToWithdraw = address(this).balance - referralRewardBank;</span>
+<span class="cstat-no" title="statement not covered" >        payable(msg.sender).transfer(balanceToWithdraw)</span>;
+    }
+}
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Aug 02 2022 19:05:07 GMT+0300 (Москва, стандартное время)
+</div>
+</div>
+<script src="../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../sorter.js"></script>
+</body>
+</html>
