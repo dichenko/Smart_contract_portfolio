@@ -24,11 +24,13 @@ interface ACDMPlatformInterface extends ethers.utils.Interface {
   functions: {
     "DAO()": FunctionFragment;
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "acdmEmission()": FunctionFragment;
     "addOrder(uint256,uint256)": FunctionFragment;
     "buyAcdm()": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
+    "lastPrice()": FunctionFragment;
     "orders(uint256)": FunctionFragment;
     "redeemOrder(uint256)": FunctionFragment;
     "referralRewardBank()": FunctionFragment;
@@ -38,6 +40,7 @@ interface ACDMPlatformInterface extends ethers.utils.Interface {
     "removeOrder(uint256)": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
+    "saleRoundReferRewards(uint256)": FunctionFragment;
     "setSaleRoundReferRewards(uint256,uint256)": FunctionFragment;
     "setTradeRoundReferRewards(uint256,uint256)": FunctionFragment;
     "startPlatform()": FunctionFragment;
@@ -45,12 +48,18 @@ interface ACDMPlatformInterface extends ethers.utils.Interface {
     "startTradeRound()": FunctionFragment;
     "status()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
+    "tradeRoundReferRewards(uint256)": FunctionFragment;
+    "tradeRoundVolume()": FunctionFragment;
     "withdraw()": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "DAO", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "DEFAULT_ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "acdmEmission",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -70,6 +79,7 @@ interface ACDMPlatformInterface extends ethers.utils.Interface {
     functionFragment: "hasRole",
     values: [BytesLike, string]
   ): string;
+  encodeFunctionData(functionFragment: "lastPrice", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "orders",
     values: [BigNumberish]
@@ -98,6 +108,10 @@ interface ACDMPlatformInterface extends ethers.utils.Interface {
     values: [BytesLike, string]
   ): string;
   encodeFunctionData(
+    functionFragment: "saleRoundReferRewards",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setSaleRoundReferRewards",
     values: [BigNumberish, BigNumberish]
   ): string;
@@ -122,11 +136,23 @@ interface ACDMPlatformInterface extends ethers.utils.Interface {
     functionFragment: "supportsInterface",
     values: [BytesLike]
   ): string;
+  encodeFunctionData(
+    functionFragment: "tradeRoundReferRewards",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "tradeRoundVolume",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "withdraw", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "DAO", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "DEFAULT_ADMIN_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "acdmEmission",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "addOrder", data: BytesLike): Result;
@@ -137,6 +163,7 @@ interface ACDMPlatformInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "lastPrice", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "orders", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "redeemOrder",
@@ -158,6 +185,10 @@ interface ACDMPlatformInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "saleRoundReferRewards",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "setSaleRoundReferRewards",
     data: BytesLike
@@ -181,6 +212,14 @@ interface ACDMPlatformInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "status", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "tradeRoundReferRewards",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "tradeRoundVolume",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
@@ -284,6 +323,8 @@ export class ACDMPlatform extends BaseContract {
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
+    acdmEmission(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     addOrder(
       _amount: BigNumberish,
       _price: BigNumberish,
@@ -307,6 +348,8 @@ export class ACDMPlatform extends BaseContract {
       account: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    lastPrice(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     orders(
       arg0: BigNumberish,
@@ -353,6 +396,11 @@ export class ACDMPlatform extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    saleRoundReferRewards(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     setSaleRoundReferRewards(
       _newPercent1: BigNumberish,
       _newPercent2: BigNumberish,
@@ -384,6 +432,13 @@ export class ACDMPlatform extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    tradeRoundReferRewards(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    tradeRoundVolume(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     withdraw(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -392,6 +447,8 @@ export class ACDMPlatform extends BaseContract {
   DAO(overrides?: CallOverrides): Promise<string>;
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  acdmEmission(overrides?: CallOverrides): Promise<BigNumber>;
 
   addOrder(
     _amount: BigNumberish,
@@ -416,6 +473,8 @@ export class ACDMPlatform extends BaseContract {
     account: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
+
+  lastPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
   orders(
     arg0: BigNumberish,
@@ -462,6 +521,11 @@ export class ACDMPlatform extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  saleRoundReferRewards(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   setSaleRoundReferRewards(
     _newPercent1: BigNumberish,
     _newPercent2: BigNumberish,
@@ -493,6 +557,13 @@ export class ACDMPlatform extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  tradeRoundReferRewards(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  tradeRoundVolume(overrides?: CallOverrides): Promise<BigNumber>;
+
   withdraw(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -501,6 +572,8 @@ export class ACDMPlatform extends BaseContract {
     DAO(overrides?: CallOverrides): Promise<string>;
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    acdmEmission(overrides?: CallOverrides): Promise<BigNumber>;
 
     addOrder(
       _amount: BigNumberish,
@@ -523,6 +596,8 @@ export class ACDMPlatform extends BaseContract {
       account: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    lastPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
     orders(
       arg0: BigNumberish,
@@ -560,6 +635,11 @@ export class ACDMPlatform extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    saleRoundReferRewards(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     setSaleRoundReferRewards(
       _newPercent1: BigNumberish,
       _newPercent2: BigNumberish,
@@ -584,6 +664,13 @@ export class ACDMPlatform extends BaseContract {
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    tradeRoundReferRewards(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    tradeRoundVolume(overrides?: CallOverrides): Promise<BigNumber>;
 
     withdraw(overrides?: CallOverrides): Promise<void>;
   };
@@ -697,6 +784,8 @@ export class ACDMPlatform extends BaseContract {
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
+    acdmEmission(overrides?: CallOverrides): Promise<BigNumber>;
+
     addOrder(
       _amount: BigNumberish,
       _price: BigNumberish,
@@ -723,6 +812,8 @@ export class ACDMPlatform extends BaseContract {
       account: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    lastPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
     orders(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -759,6 +850,11 @@ export class ACDMPlatform extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    saleRoundReferRewards(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     setSaleRoundReferRewards(
       _newPercent1: BigNumberish,
       _newPercent2: BigNumberish,
@@ -790,6 +886,13 @@ export class ACDMPlatform extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    tradeRoundReferRewards(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    tradeRoundVolume(overrides?: CallOverrides): Promise<BigNumber>;
+
     withdraw(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -801,6 +904,8 @@ export class ACDMPlatform extends BaseContract {
     DEFAULT_ADMIN_ROLE(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    acdmEmission(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     addOrder(
       _amount: BigNumberish,
@@ -828,6 +933,8 @@ export class ACDMPlatform extends BaseContract {
       account: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    lastPrice(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     orders(
       arg0: BigNumberish,
@@ -875,6 +982,11 @@ export class ACDMPlatform extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    saleRoundReferRewards(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     setSaleRoundReferRewards(
       _newPercent1: BigNumberish,
       _newPercent2: BigNumberish,
@@ -905,6 +1017,13 @@ export class ACDMPlatform extends BaseContract {
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    tradeRoundReferRewards(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    tradeRoundVolume(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     withdraw(
       overrides?: Overrides & { from?: string | Promise<string> }

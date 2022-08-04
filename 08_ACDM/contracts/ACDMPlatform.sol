@@ -26,15 +26,15 @@ contract ACDMPlatform is AccessControl {
 
     bool started;
     IACDM_TOKEN acdmToken;
-    uint[2] saleRoundReferRewards = [50, 30];
-    uint[2] tradeRoundReferRewards = [25, 25];
+    uint[2] public saleRoundReferRewards = [50, 30];
+    uint[2] public tradeRoundReferRewards = [25, 25];
     uint commonSaleRoundReferPercent = 80;
     uint commonTradeRoundReferPercent = 50;
     uint public referralRewardBank;
     uint roundDuration = 3 days;
-    uint tradeRoundVolume = 1 ether;
-    uint lastPrice = 10000000;
-    uint acdmEmission = 100000;
+    uint public tradeRoundVolume = 1 ether;
+    uint public lastPrice = 10000000;
+    uint public acdmEmission = 100000;
     uint roundStartTime;
     uint acdmTokenDecimals;
 
@@ -115,6 +115,7 @@ contract ACDMPlatform is AccessControl {
         delete orders;
 
         _updateTokenPrice();
+
         acdmEmission = tradeRoundVolume / lastPrice;
         acdmToken.mint(acdmEmission * 10**acdmToken.decimals());
         roundStartTime = block.timestamp;
@@ -162,7 +163,7 @@ contract ACDMPlatform is AccessControl {
         } else {
             emit OrderUpdated(_id, order.amount);
         }
-        tradeRoundVolume += amount;
+        tradeRoundVolume += msg.value;
         payable(order.seller).transfer(
             (msg.value * (1000 - commonTradeRoundReferPercent)) / 1000
         );
@@ -241,7 +242,7 @@ contract ACDMPlatform is AccessControl {
 
     ///@notice Change token price every saleRound
     function _updateTokenPrice() private {
-        lastPrice = (lastPrice * 103) / 100 + 4000000000000;
+        lastPrice = (lastPrice * 103) / 100 ;
         //@FIX
     }
 
