@@ -2,7 +2,6 @@ import { expect } from "chai";
 import { ethers, network } from "hardhat";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { Contract } from "ethers";
-import { Address } from "tonweb/dist/types/utils/address";
 
 describe("ACDM Platform", function () {
   let dao: Contract;
@@ -48,7 +47,6 @@ describe("ACDM Platform", function () {
     const ACDMFactory = await ethers.getContractFactory("ACDMPlatform");
     acdmPlatform = await ACDMFactory.deploy(acdmToken.address);
     await acdmPlatform.deployed();
-    
 
     //deposit lp-tokens for users
     await lpToken.mint(user1.address, ethers.utils.parseEther("1"));
@@ -77,6 +75,18 @@ describe("ACDM Platform", function () {
     });
   });
 
+  describe("User registration", function () {
+    it("Should registrate correctly", async function () {
+      await expect(acdmPlatform.connect(user1).register(user3.address)).to.revertedWith(
+        "Reffer not registered"
+      );
+      await acdmPlatform.connect(user1).register(deployer.address);
+      await acdmPlatform.connect(user2).register(user1.address);
+      await acdmPlatform.connect(user3).register(user2.address);
+      expect(await acdmPlatform.registered(user1.address)).to.eq(true);
+    });
+  });
+
   describe("Platform starting", function () {
     it("Only admin can start platform", async function () {
       await expect(acdmPlatform.connect(user1).startPlatform()).to.reverted;
@@ -87,17 +97,6 @@ describe("ACDM Platform", function () {
       expect(await acdmToken.totalSupply()).to.eq(100000 * 10 ** 6);
       expect(await acdmPlatform.status()).to.eq(1);
     });
-  });
-
-  describe("User registration", function () {
-    it("Should registrate correctly", async function () {
-      await expect( acdmPlatform.connect(user1).register(user3.address)).to.revertedWith("Reffer not registered");
-      await acdmPlatform.connect(user1).register(deployer.address);
-      await acdmPlatform.connect(user2).register(user1.address);
-      await acdmPlatform.connect(user3).register(user2.address);
-      expect(await acdmPlatform.registered(user1.address)).to.eq(true);
-    });
-
   });
 
 });

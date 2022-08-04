@@ -103,6 +103,17 @@ contract ACDMPlatform is AccessControl {
             roundStartTime + 3 days <= block.timestamp,
             "Trade round is not over yet"
         );
+        //return acdm tokens to sellers
+        for (uint i = 0; i < orders.length; i++){
+            Order storage order = orders[i];
+            if (!order.executed){
+                acdmToken.transfer(order.seller, order.amount);
+            }
+        }
+
+        //clear array
+        delete orders;
+
         _updateTokenPrice();
         acdmEmission = tradeRoundVolume / lastPrice;
         acdmToken.mint(acdmEmission * 10**acdmToken.decimals());
