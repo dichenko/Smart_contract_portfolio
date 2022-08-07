@@ -77,10 +77,10 @@ describe("Marketplace-store", function () {
 
       await erc721.connect(creator).approve(marketplace.address, _id);
 
-      await marketplace.connect(creator).listItem(721, _id, 1, ethers.utils.parseEther("2"));
+      await marketplace.connect(creator).listItem(0, _id, 1, ethers.utils.parseEther("2"));
       expect(await erc721.ownerOf(_id)).to.equal(marketplace.address);
 
-      await marketplace.connect(creator).cancel(721, _id, 1, ethers.utils.parseEther("2"));
+      await marketplace.connect(creator).cancel(0, _id, 1, ethers.utils.parseEther("2"));
       expect(await erc721.ownerOf(_id)).to.equal(creator.address);
     });
     it("Should list and cancel 1155 token ", async function () {
@@ -91,11 +91,11 @@ describe("Marketplace-store", function () {
 
       await erc1155.connect(creator).setApprovalForAll(marketplace.address, true);
 
-      await marketplace.connect(creator).listItem(1155, _id, 100, 25000000);
+      await marketplace.connect(creator).listItem(1, _id, 100, 25000000);
       expect(await erc1155.balanceOf(creator.address, _id)).to.equal(_amount - 100);
       expect(await erc1155.balanceOf(marketplace.address, _id)).to.equal(100);
 
-      await marketplace.connect(creator).cancel(1155, _id, 100, 25000000);
+      await marketplace.connect(creator).cancel(1, _id, 100, 25000000);
       expect(await erc1155.balanceOf(creator.address, _id)).to.equal(_amount);
     });
   });
@@ -105,11 +105,11 @@ describe("Marketplace-store", function () {
       const _id = 1;
       await marketplace.connect(creator).mint721(creator.address, "/testURI");
       await erc721.connect(creator).approve(marketplace.address, _id);
-      await marketplace.connect(creator).listItem(721, _id, 1, 1000);
+      await marketplace.connect(creator).listItem(0, _id, 1, 1000);
       await erc20.mint(1000);
       await erc20.transfer(user2.address, 1000);
       await erc20.connect(user2).approve(marketplace.address, 1000);
-      await marketplace.connect(user2).buyItem(creator.address, 721, _id, 1, 1000);
+      await marketplace.connect(user2).buyItem(creator.address, 0, _id, 1, 1000);
       expect(await erc721.ownerOf(_id)).to.equal(user2.address);
       expect(await erc20.balanceOf(creator.address)).to.equal(1000);
     });
@@ -118,11 +118,11 @@ describe("Marketplace-store", function () {
         const _id = 3;
         await marketplace.connect(creator).mint1155(creator.address, _id, 20, "0x");
         await erc1155.connect(creator).setApprovalForAll(marketplace.address, true);
-        await marketplace.connect(creator).listItem(1155, _id, 20, 1000);
+        await marketplace.connect(creator).listItem(1, _id, 20, 1000);
         await erc20.mint(1000);
         await erc20.transfer(user2.address, 1000);
         await erc20.connect(user2).approve(marketplace.address, 1000);
-        await marketplace.connect(user2).buyItem(creator.address, 1155, _id, 20, 1000);
+        await marketplace.connect(user2).buyItem(creator.address, 1, _id, 20, 1000);
         expect(await erc1155.balanceOf(user2.address, _id)).to.equal(20);
         expect(await erc20.balanceOf(creator.address)).to.equal(1000);
       });
@@ -131,12 +131,12 @@ describe("Marketplace-store", function () {
         const _id = 1;
         await marketplace.connect(creator).mint721(creator.address, "/testURI");
         await erc721.connect(creator).approve(marketplace.address, _id);
-        await marketplace.connect(creator).listItem(721, _id, 1, 1000);
+        await marketplace.connect(creator).listItem(0, _id, 1, 1000);
         await erc20.mint(1000);
         await erc20.transfer(user2.address, 1000);
         await erc20.connect(user2).approve(marketplace.address, 1000);
-        await marketplace.connect(user2).buyItem(creator.address, 721, _id, 1, 1000);
-        await  expect(marketplace.connect(creator).cancel(721, _id, 1, 1000)).to.be.revertedWith("Nothing to cancel");
+        await marketplace.connect(user2).buyItem(creator.address, 0, _id, 1, 1000);
+        await  expect(marketplace.connect(creator).cancel(0, _id, 1, 1000)).to.be.revertedWith("Nothing to cancel");
       });
 
 

@@ -65,9 +65,9 @@ describe("Marketplace - auction", function () {
   describe("Auction listing", function () {
     it("Should list  721 token ", async function () {
       //auction index 0
-      await marketplace.connect(creator).listItemOnAuction(721, 1, 1, 1000);
+      await marketplace.connect(creator).listItemOnAuction(0, 1, 1, 1000);
       const item = await marketplace.getAuctionItem(0);
-      expect(item.nftStandart).to.eq(721);
+      expect(item.nftStandart).to.eq(0);
       expect(item.seller).to.eq(creator.address);
       expect(item.amount).to.eq(1);
       expect(item.initPrice).to.eq(1000);
@@ -75,9 +75,9 @@ describe("Marketplace - auction", function () {
     });
 
     it("Should list 1155 token ", async function () {
-      await marketplace.connect(creator).listItemOnAuction(1155, 3, 100, 1000);
+      await marketplace.connect(creator).listItemOnAuction(1, 3, 100, 1000);
       const item = await marketplace.getAuctionItem(0);
-      expect(item.nftStandart).to.eq(1155);
+      expect(item.nftStandart).to.eq(1);
       expect(item.seller).to.eq(creator.address);
       expect(item.amount).to.eq(100);
       expect(item.initPrice).to.eq(1000);
@@ -88,7 +88,7 @@ describe("Marketplace - auction", function () {
   describe("Auction bidding", function () {
     it("Should bid corrrectly while auction is in progress", async function () {
       //auction index 0
-      await marketplace.connect(creator).listItemOnAuction(721, 1, 1, 1000);
+      await marketplace.connect(creator).listItemOnAuction(0, 1, 1, 1000);
       await expect(() => marketplace.connect(user2).makeBid(0, 2000)).to.changeTokenBalances(erc20, [user2, marketplace], [-2000, 2000]);
       await expect(() => marketplace.connect(user3).makeBid(0, 3000)).to.changeTokenBalances(
         erc20,
@@ -98,19 +98,19 @@ describe("Marketplace - auction", function () {
     });
 
     it("Should not bid less than the current bid", async function () {
-      await marketplace.connect(creator).listItemOnAuction(721, 1, 1, 1000);
+      await marketplace.connect(creator).listItemOnAuction(0, 1, 1, 1000);
       await expect(marketplace.connect(user2).makeBid(0, 5)).to.revertedWith("Too low price");
       await marketplace.connect(user3).makeBid(0, 5000);
       await expect(marketplace.connect(user2).makeBid(0, 4999)).to.revertedWith("Too low price");
     });
 
     it("Should not bid in an auction that does not exist ", async function () {
-      await marketplace.connect(creator).listItemOnAuction(721, 1, 1, 1000);
+      await marketplace.connect(creator).listItemOnAuction(0, 1, 1, 1000);
       await expect(marketplace.connect(user2).makeBid(20, 5)).to.revertedWith("Auction does not exist");
     });
 
     it("Should not bid after durationTime ", async function () {
-      await marketplace.connect(creator).listItemOnAuction(721, 1, 1, 1000);
+      await marketplace.connect(creator).listItemOnAuction(0, 1, 1, 1000);
       const durationTime = Number(await marketplace.auctionDuration());
       const endtime = await  time.latest() + durationTime;
       await network.provider.send("evm_mine", [endtime + 1]);
@@ -121,7 +121,7 @@ describe("Marketplace - auction", function () {
   describe("Auction finishing", function () {
     it("Should  finish corrrectly if succeeds", async function () {
       //auction index 0
-      await marketplace.connect(creator).listItemOnAuction(721, 1, 1, 1000);
+      await marketplace.connect(creator).listItemOnAuction(0, 1, 1, 1000);
       await marketplace.connect(user2).makeBid(0, 1500);
       await marketplace.connect(user3).makeBid(0, 1900);
       await marketplace.connect(user2).makeBid(0, 2000);
@@ -139,7 +139,7 @@ describe("Marketplace - auction", function () {
     });
 
     it("Should  finish corrrectly if not succeeds ", async function () {
-      await marketplace.connect(creator).listItemOnAuction(721, 1, 1, 1000);
+      await marketplace.connect(creator).listItemOnAuction(0, 1, 1, 1000);
       await marketplace.connect(user2).makeBid(0, 1500);
       const durationTime = Number(await marketplace.auctionDuration());
       const endtime = await  time.latest() + durationTime;
@@ -154,12 +154,12 @@ describe("Marketplace - auction", function () {
     });
 
     it("Should not finish before durationTime ", async function () {
-      await marketplace.connect(creator).listItemOnAuction(721, 1, 1, 1000);
+      await marketplace.connect(creator).listItemOnAuction(0, 1, 1, 1000);
       await expect(marketplace.connect(user2).finishAuction(0)).to.revertedWith("'Can't finish auction before duration time is up");
     });
 
     it("Should not finish twice ", async function () {
-      await marketplace.connect(creator).listItemOnAuction(721, 1, 1, 1000);
+      await marketplace.connect(creator).listItemOnAuction(0, 1, 1, 1000);
       await marketplace.connect(user2).makeBid(0, 1500);
       const durationTime = Number(await marketplace.auctionDuration());
       const endtime = await  time.latest() + durationTime;

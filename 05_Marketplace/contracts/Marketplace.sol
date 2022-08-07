@@ -12,13 +12,20 @@ contract Marketplace is AccessControl, IERC1155Receiver {
     IERC721Mintable nft721;
     IERC1155Mintable nft1155;
 
+    enum NftStandart {
+        ERC721,
+        ERC1155
+    }
+   
+
     //NFT-auction
     uint public auctionDuration = 3 days;
     uint public minBidCounter = 3;
 
     struct AuctionItem {
         bool ended;
-        uint16 nftStandart;
+        NftStandart nftStandart;
+        //uint16 nftStandart;
         uint96 startTime;
         address seller;
         address highestBidder;
@@ -39,14 +46,14 @@ contract Marketplace is AccessControl, IERC1155Receiver {
 
     event ItemListed(
         address seller,
-        uint16 nftStandart,
+        NftStandart nftStandart,
         uint id,
         uint amount,
         uint price
     );
     event ItemCancelled(
         address seller,
-        uint16 nftStandart,
+        NftStandart nftStandart,
         uint id,
         uint amount,
         uint price
@@ -54,14 +61,14 @@ contract Marketplace is AccessControl, IERC1155Receiver {
     event ItemPurchased(
         address buyer,
         address seller,
-        uint16 nftStandart,
+        NftStandart nftStandart,
         uint id,
         uint amount,
         uint price
     );
     event AuctionItemListed(
         uint itemIndex,
-        uint nftStandart,
+        NftStandart nftStandart,
         uint id,
         uint amount,
         uint initPrice,
@@ -87,13 +94,13 @@ contract Marketplace is AccessControl, IERC1155Receiver {
 
     ///@notice list nft in Marketplace
     function listItem(
-        uint16 _nftStandart,
+        NftStandart _nftStandart,
         uint _id,
         uint _amount,
         uint _price
     ) external {
-        require(_nftStandart == 721 || _nftStandart == 1155);
-        if (_nftStandart == 721) {
+        
+        if (_nftStandart == NftStandart.ERC721) {
             require(_amount == 1, "Wrong NFT standart");
             require(nft721.ownerOf(_id) == msg.sender);
             bytes32 item = keccak256(
@@ -126,7 +133,7 @@ contract Marketplace is AccessControl, IERC1155Receiver {
 
     ///@notice unlist nft in Marketplace
     function cancel(
-        uint16 _nftStandart,
+        NftStandart _nftStandart,
         uint _id,
         uint _amount,
         uint _price
@@ -135,7 +142,7 @@ contract Marketplace is AccessControl, IERC1155Receiver {
             abi.encodePacked(msg.sender, _nftStandart, _id, _amount, _price)
         );
         require(itemsForSale[item], "Nothing to cancel");
-        if (_nftStandart == 721) {
+        if (_nftStandart == NftStandart.ERC721) {
             nft721.safeTransferFrom(address(this), msg.sender, _id);
             itemsForSale[item] = false;
         } else {
@@ -154,7 +161,7 @@ contract Marketplace is AccessControl, IERC1155Receiver {
     ///@notice buy nft in Marketplace
     function buyItem(
         address _seller,
-        uint16 _nftStandart,
+        NftStandart _nftStandart,
         uint _id,
         uint _amount,
         uint _price
@@ -165,7 +172,7 @@ contract Marketplace is AccessControl, IERC1155Receiver {
         require(itemsForSale[item], "Nothing to buy");
         erc20.transferFrom(msg.sender, _seller, _price);
 
-        if (_nftStandart == 721) {
+        if (_nftStandart == NftStandart.ERC721) {
             nft721.safeTransferFrom(address(this), msg.sender, _id);
         } else {
             nft1155.safeTransferFrom(
@@ -207,16 +214,12 @@ contract Marketplace is AccessControl, IERC1155Receiver {
 
     //@notice listed item on auction
     function listItemOnAuction(
-        uint16 _nftStandart,
+        NftStandart _nftStandart,
         uint _id,
         uint _amount,
         uint _initPrice
     ) external {
-        require(
-            _nftStandart == 721 || _nftStandart == 1155,
-            "Invalid standart"
-        );
-        if (_nftStandart == 721) {
+        if (_nftStandart == NftStandart.ERC721) {
             require(nft721.ownerOf(_id) == msg.sender, "Not NFT owner");
             nft721.transferFrom(msg.sender, address(this), _id);
         } else {
@@ -293,7 +296,7 @@ contract Marketplace is AccessControl, IERC1155Receiver {
                 auctionItems[_id].seller,
                 auctionItems[_id].highestBid
             );
-            if (auctionItems[_id].nftStandart == 721) {
+            if (auctionItems[_id].nftStandart == NftStandart.ERC721) {
                 nft721.transferFrom(
                     address(this),
                     auctionItems[_id].highestBidder,
@@ -313,7 +316,7 @@ contract Marketplace is AccessControl, IERC1155Receiver {
                 auctionItems[_id].highestBidder,
                 auctionItems[_id].highestBid
             );
-            if (auctionItems[_id].nftStandart == 721) {
+            if (auctionItems[_id].nftStandart == NftStandart.ERC721) {
                 nft721.transferFrom(
                     address(this),
                     auctionItems[_id].seller,
