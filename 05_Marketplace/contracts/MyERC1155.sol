@@ -22,6 +22,7 @@ contract MyERC1155 is ERC1155, ERC1155Supply, AccessControl{
         _mint(msg.sender, TEST, 1000, "");
         
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _setRoleAdmin(CREATOR, DEFAULT_ADMIN_ROLE);
         
        
     }

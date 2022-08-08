@@ -9,23 +9,35 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract Marketplace is AccessControl, IERC1155Receiver {
     IERC20 erc20;
-    IERC721Mintable nft721;
-    IERC1155Mintable nft1155;
-
+   
     enum NftStandart {
         ERC721,
         ERC1155
     }
-   
+
+    IERC721Mintable[] public supported721;
+    IERC1155Mintable[] public supported1155;
 
     //NFT-auction
     uint public auctionDuration = 3 days;
     uint public minBidCounter = 3;
 
+    struct StoreItem{
+        bool listed;
+        address seller;
+        NftStandart nftStandart;
+        uint collectionId;
+        uint nftId;
+        uint amount;
+        uint price;
+    }
+
+    StoreItem[] public storeItems;
+
     struct AuctionItem {
         bool ended;
+        uint collectionId;
         NftStandart nftStandart;
-        //uint16 nftStandart;
         uint96 startTime;
         address seller;
         address highestBidder;
@@ -38,36 +50,24 @@ contract Marketplace is AccessControl, IERC1155Receiver {
     AuctionItem[] public auctionItems;
 
     //mapping for the NFT-store
-    mapping(bytes32 => bool) itemsForSale;
+    //mapping(bytes32 => bool) itemsForSale;
 
-    //Roles
-    bytes32 public constant ADMIN = keccak256(abi.encodePacked("ADMIN"));
     bytes32 public constant CREATOR = keccak256(abi.encodePacked("CREATOR"));
 
     event ItemListed(
+        uint itemId,
         address seller,
         NftStandart nftStandart,
-        uint id,
+        uint collectionId,
+        uint nftId,
         uint amount,
         uint price
     );
-    event ItemCancelled(
-        address seller,
-        NftStandart nftStandart,
-        uint id,
-        uint amount,
-        uint price
-    );
-    event ItemPurchased(
-        address buyer,
-        address seller,
-        NftStandart nftStandart,
-        uint id,
-        uint amount,
-        uint price
-    );
+    event ItemCancelled(uint id);
+    event ItemPurchased( uint id);
     event AuctionItemListed(
         uint itemIndex,
+        uint collectionId,
         NftStandart nftStandart,
         uint id,
         uint amount,
@@ -75,8 +75,8 @@ contract Marketplace is AccessControl, IERC1155Receiver {
         address seller
     );
     event Bid(uint _id, uint _bid, address bidder);
-
-
+    event SupportedCollection(NftStandart _nftStandart, address _address);
+    event AuctionFinished(uint _id);
 
     constructor(
         address _erc20,
@@ -84,148 +84,135 @@ contract Marketplace is AccessControl, IERC1155Receiver {
         address _nft1155,
         address _creator
     ) {
-        _grantRole(ADMIN, msg.sender);
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _setRoleAdmin(CREATOR, DEFAULT_ADMIN_ROLE);
         _grantRole(CREATOR, _creator);
 
         erc20 = IERC20(_erc20);
-        nft721 = IERC721Mintable(_nft721);
-        nft1155 = IERC1155Mintable(_nft1155);
+        supported721.push(IERC721Mintable(_nft721));
+        supported1155.push(IERC1155Mintable(_nft1155));
     }
 
     ///@notice list nft in Marketplace
     function listItem(
         NftStandart _nftStandart,
-        uint _id,
+        uint _collectionId,
+        uint _nftId,
         uint _amount,
         uint _price
     ) external {
-        
         if (_nftStandart == NftStandart.ERC721) {
+            IERC721Mintable nft721 = supported721[_collectionId];
             require(_amount == 1, "Wrong NFT standart");
-            require(nft721.ownerOf(_id) == msg.sender);
-            bytes32 item = keccak256(
-                abi.encodePacked(msg.sender, _nftStandart, _id, _amount, _price)
-            );
-            require(!itemsForSale[item], "Item already listed");
-            nft721.transferFrom(msg.sender, address(this), _id);
-            itemsForSale[item] = true;
+            require(nft721.ownerOf(_nftId) == msg.sender);
+            nft721.transferFrom(msg.sender, address(this), _nftId);
+            storeItems.push(StoreItem(true, msg.sender, _nftStandart, _collectionId,_nftId,  _amount, _price));
+
         } else {
+            IERC1155Mintable nft1155 = supported1155[_collectionId];
             require(
-                nft1155.balanceOf(msg.sender, _id) >= _amount,
+                nft1155.balanceOf(msg.sender, _nftId) >= _amount,
                 "Not enough tokens"
             );
 
-            bytes32 item = keccak256(
-                abi.encodePacked(msg.sender, _nftStandart, _id, _amount, _price)
-            );
-            require(!itemsForSale[item], "Item already listed");
             nft1155.safeTransferFrom(
                 msg.sender,
                 address(this),
-                _id,
+                _nftId,
                 _amount,
                 ""
             );
-            itemsForSale[item] = true;
+            storeItems.push(StoreItem(true, msg.sender, _nftStandart, _collectionId,_nftId,  _amount, _price));
         }
-        emit ItemListed(msg.sender, _nftStandart, _id, _amount, _price);
+        
+        emit ItemListed(storeItems.length-1,msg.sender, _nftStandart, _collectionId, _nftId, _amount, _price);
     }
 
-    ///@notice unlist nft in Marketplace
-    function cancel(
-        NftStandart _nftStandart,
-        uint _id,
-        uint _amount,
-        uint _price
-    ) external {
-        bytes32 item = keccak256(
-            abi.encodePacked(msg.sender, _nftStandart, _id, _amount, _price)
-        );
-        require(itemsForSale[item], "Nothing to cancel");
-        if (_nftStandart == NftStandart.ERC721) {
-            nft721.safeTransferFrom(address(this), msg.sender, _id);
-            itemsForSale[item] = false;
+    ///@notice unlist nft in Marketplace store
+    function cancel(uint _itemId) external {
+        StoreItem storage item = storeItems[_itemId];
+        require (item.listed, "Item didn't listed");
+        require (item.seller == msg.sender, "Caller is not a seller of this item");
+        if (item.nftStandart == NftStandart.ERC721) {
+            IERC721Mintable nft721 = supported721[item.collectionId];
+            nft721.safeTransferFrom(address(this), msg.sender, item.nftId);
+            
         } else {
+            IERC1155Mintable nft1155 = supported1155[item.collectionId];
             nft1155.safeTransferFrom(
                 address(this),
                 msg.sender,
-                _id,
-                _amount,
+                item.nftId,
+                item.amount,
                 ""
             );
-            itemsForSale[item] = false;
         }
-        emit ItemCancelled(msg.sender, _nftStandart, _id, _amount, _price);
+        item.listed = false;
+        emit ItemCancelled(_itemId);
     }
 
     ///@notice buy nft in Marketplace
-    function buyItem(
-        address _seller,
-        NftStandart _nftStandart,
-        uint _id,
-        uint _amount,
-        uint _price
-    ) external {
-        bytes32 item = keccak256(
-            abi.encodePacked(_seller, _nftStandart, _id, _amount, _price)
-        );
-        require(itemsForSale[item], "Nothing to buy");
-        erc20.transferFrom(msg.sender, _seller, _price);
+    function buyItem(uint _itemId) external {
+        StoreItem storage item = storeItems[_itemId];
+        require(item.listed, "Iten didn't listed");
 
-        if (_nftStandart == NftStandart.ERC721) {
-            nft721.safeTransferFrom(address(this), msg.sender, _id);
+        erc20.transferFrom(msg.sender, item.seller, item.price);
+
+        if (item.nftStandart == NftStandart.ERC721) {
+            IERC721Mintable nft721 = supported721[item.collectionId];
+
+            nft721.safeTransferFrom(address(this), msg.sender, item.nftId);
         } else {
+            IERC1155Mintable nft1155 = supported1155[item.collectionId];
             nft1155.safeTransferFrom(
                 address(this),
                 msg.sender,
-                _id,
-                _amount,
+                item.nftId,
+                item.amount,
                 ""
             );
         }
-        itemsForSale[item] = false;
-        emit ItemPurchased(
-            msg.sender,
-            _seller,
-            _nftStandart,
-            _id,
-            _amount,
-            _price
-        );
+        item.listed= false;
+        emit ItemPurchased(_itemId);
     }
 
     ///@notice Allow creator to mint new 721 NFT
-    function mint721(address recipient, string memory _tokenURI)
+    function mint721(uint _collectionId, string memory _tokenURI)
         external
         onlyRole(CREATOR)
-    {
-        nft721.mint(recipient, _tokenURI);
+    {  
+        IERC721Mintable nft721 = supported721[_collectionId];
+        nft721.mint(msg.sender, _tokenURI);
     }
 
     ///@notice Allow creator to mint new 1155 NFT
     function mint1155(
-        address account,
+        uint256 _collectionId,
         uint256 id,
         uint256 amount,
         bytes memory data
     ) external onlyRole(CREATOR) {
-        nft1155.mint(account, id, amount, data);
+        IERC1155Mintable nft1155 = supported1155[_collectionId];
+        nft1155.mint(msg.sender, id, amount, data);
     }
 
     //@notice listed item on auction
     function listItemOnAuction(
+        uint256 _collectionId,
         NftStandart _nftStandart,
         uint _id,
         uint _amount,
         uint _initPrice
     ) external {
         if (_nftStandart == NftStandart.ERC721) {
-            require(nft721.ownerOf(_id) == msg.sender, "Not NFT owner");
+            IERC721Mintable nft721 = supported721[_collectionId];
+            require(nft721.ownerOf(_id) == msg.sender, "Caller is not NFT's owner");
             nft721.transferFrom(msg.sender, address(this), _id);
         } else {
+            IERC1155Mintable nft1155 = supported1155[_collectionId];
             require(
                 nft1155.balanceOf(msg.sender, _id) >= _amount,
-                "Not enough tokens"
+                "Not enough NFTs"
             );
             nft1155.safeTransferFrom(
                 msg.sender,
@@ -239,6 +226,7 @@ contract Marketplace is AccessControl, IERC1155Receiver {
         auctionItems.push(
             AuctionItem(
                 false,
+                _collectionId,
                 _nftStandart,
                 uint96(block.timestamp),
                 msg.sender,
@@ -255,6 +243,7 @@ contract Marketplace is AccessControl, IERC1155Receiver {
 
         emit AuctionItemListed(
             itemIndex,
+            _collectionId,
             _nftStandart,
             _id,
             _amount,
@@ -285,53 +274,59 @@ contract Marketplace is AccessControl, IERC1155Receiver {
     }
 
     function finishAuction(uint _id) external {
-        require(!auctionItems[_id].ended, "Auction already finished");
+        AuctionItem storage item = auctionItems[_id];
+        require(!item.ended, "Auction already finished");
         require(
-            auctionItems[_id].startTime + auctionDuration <= block.timestamp,
+            item.startTime + auctionDuration <= block.timestamp,
             "Can't finish auction before duration time is up"
         );
-        auctionItems[_id].ended = true;
-        if (auctionItems[_id].bidCounter >= minBidCounter) {
+        item.ended = true;
+        if (item.bidCounter >= minBidCounter) {
             erc20.transfer(
-                auctionItems[_id].seller,
-                auctionItems[_id].highestBid
+                item.seller,
+                item.highestBid
             );
-            if (auctionItems[_id].nftStandart == NftStandart.ERC721) {
+            if (item.nftStandart == NftStandart.ERC721) {
+                IERC721Mintable nft721 = supported721[item.collectionId];
                 nft721.transferFrom(
                     address(this),
-                    auctionItems[_id].highestBidder,
-                    auctionItems[_id].nftId
+                    item.highestBidder,
+                    item.nftId
                 );
             } else {
+                IERC1155Mintable nft1155 = supported1155[item.collectionId];
                 nft1155.safeTransferFrom(
                     address(this),
-                    auctionItems[_id].highestBidder,
-                    auctionItems[_id].nftId,
-                    auctionItems[_id].amount,
+                    item.highestBidder,
+                    item.nftId,
+                    item.amount,
                     ""
                 );
             }
         } else {
             erc20.transfer(
-                auctionItems[_id].highestBidder,
-                auctionItems[_id].highestBid
+                item.highestBidder,
+                item.highestBid
             );
-            if (auctionItems[_id].nftStandart == NftStandart.ERC721) {
+            if (item.nftStandart == NftStandart.ERC721) {
+                IERC721Mintable nft721 = supported721[item.collectionId];
                 nft721.transferFrom(
                     address(this),
-                    auctionItems[_id].seller,
-                    auctionItems[_id].nftId
+                    item.seller,
+                    item.nftId
                 );
             } else {
+                IERC1155Mintable nft1155 = supported1155[item.collectionId];
                 nft1155.safeTransferFrom(
                     address(this),
-                    auctionItems[_id].seller,
-                    auctionItems[_id].nftId,
-                    auctionItems[_id].amount,
+                    item.seller,
+                    item.nftId,
+                    item.amount,
                     ""
                 );
             }
         }
+        emit AuctionFinished(_id);
     }
 
     ///@notice get info about auction item by id
@@ -382,5 +377,14 @@ contract Marketplace is AccessControl, IERC1155Receiver {
                     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"
                 )
             );
+    }
+///@notice add new NFT collection to marketplace
+    function addNftCollection (NftStandart _nftStandart, address _address) external onlyRole(DEFAULT_ADMIN_ROLE){
+        if (_nftStandart == NftStandart.ERC721){
+            supported721.push(IERC721Mintable(_address));
+        } else {
+            supported1155.push(IERC1155Mintable(_address));
+        }
+        emit SupportedCollection(_nftStandart, _address);
     }
 }

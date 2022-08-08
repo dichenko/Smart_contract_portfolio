@@ -14,6 +14,7 @@ contract MyERC721 is ERC721Enumerable, AccessControl {
     constructor() ERC721("MarketplaceNFT", "MPNFT") {
         
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _setRoleAdmin(CREATOR, DEFAULT_ADMIN_ROLE);
         
     }
 
