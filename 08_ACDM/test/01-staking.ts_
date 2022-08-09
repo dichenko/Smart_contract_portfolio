@@ -3,6 +3,7 @@ import { ethers, network } from "hardhat";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { Contract } from "ethers";
 import * as dotenv from "dotenv";
+import { MerkleTree } from "merkletreejs";
 dotenv.config();
 
 describe("Staking", function () {
@@ -15,23 +16,54 @@ describe("Staking", function () {
   let user1: SignerWithAddress;
   let user2: SignerWithAddress;
   let user3: SignerWithAddress;
+  let user4: SignerWithAddress;
+  let user5: SignerWithAddress;
+  let merkleTree: MerkleTree;
+  let leafNodes: string[];
+  let user1Proof: string[];
+  let user2Proof: string[];
+  let user3Proof: string[];
+  let user4Proof: string[];
 
   beforeEach(async () => {
-    [deployer, chairman, user1, user2, user3] = await ethers.getSigners();
-
+    [deployer, chairman, user1, user2, user3, user4, user5] = await ethers.getSigners();
+   
     //deploy lpToken
     const LPFactory = await ethers.getContractFactory("LPToken");
     lpToken = await LPFactory.deploy();
     lpToken.deployed();
-
+    
     //deploy reward token
     const REWARDFactory = await ethers.getContractFactory("XXXToken");
     rewardToken = await REWARDFactory.deploy();
     rewardToken.deployed();
+   
+    //create white list
+    let whieListedAddresses = [
+      deployer.address,
+      chairman.address,
+      user1.address,
+      user2.address,
+      user3.address,
+      user4.address,
+    ];
+  
+    //create array of leaf hashes
+    leafNodes = whieListedAddresses.map((addr) => ethers.utils.keccak256(addr));
+  
+    //create new merkle tree
+    merkleTree = new MerkleTree(leafNodes, ethers.utils.keccak256, { sortPairs: true });
+   
+    //gets root hash from merkle tree
+    let rootHash = merkleTree.getRoot();
+
+    user1Proof = merkleTree.getHexProof(leafNodes[2]);
+    user2Proof = merkleTree.getHexProof(leafNodes[3]);
+    user3Proof = merkleTree.getHexProof(leafNodes[4]);
 
     //deploy Staking Contract
     const StakingFactory = await ethers.getContractFactory("Staking");
-    staking = await StakingFactory.deploy(lpToken.address, rewardToken.address);
+    staking = await StakingFactory.deploy(lpToken.address, rewardToken.address, rootHash);
     staking.deployed();
 
     //deploy DAO Contract
@@ -43,13 +75,17 @@ describe("Staking", function () {
     await lpToken.mint(user1.address, ethers.utils.parseEther("1"));
     await lpToken.mint(user2.address, ethers.utils.parseEther("1"));
     await lpToken.mint(user3.address, ethers.utils.parseEther("1"));
+    await lpToken.mint(user4.address, ethers.utils.parseEther("1"));
+    await lpToken.mint(user5.address, ethers.utils.parseEther("1"));
     await lpToken.connect(user1).approve(staking.address, ethers.utils.parseEther("1"));
     await lpToken.connect(user2).approve(staking.address, ethers.utils.parseEther("1"));
     await lpToken.connect(user3).approve(staking.address, ethers.utils.parseEther("1"));
+    await lpToken.connect(user4).approve(staking.address, ethers.utils.parseEther("1"));
+    await lpToken.connect(user5).approve(staking.address, ethers.utils.parseEther("1"));
 
     //deposit reward tokens for staking contract
     await rewardToken.mint(staking.address, ethers.utils.parseEther("1"));
-
+    
     //setup staking
     await staking.setupDao(dao.address);
 
@@ -70,36 +106,48 @@ describe("Staking", function () {
 
   describe("Stake", function () {
     it("Should emit Staked event", async function () {
-      expect(await staking.connect(user1).stake(10000))
+      expect(await staking.connect(user1).stake(10000, user1Proof))
         .to.emit(staking, "Staked")
         .withArgs(user1.address, 10000);
     });
 
     it("Should change stakingValue", async function () {
-      await staking.connect(user1).stake(11000);
+      await staking.connect(user1).stake(11000, user1Proof);
       expect(await staking.stakingValue()).to.eq(11000);
-      await staking.connect(user2).stake(3000);
+      await staking.connect(user2).stake(3000, user2Proof);
       expect(await staking.stakingValue()).to.eq(11000 + 3000);
     });
 
     it("Should change stakeAmount", async function () {
-      await staking.connect(user1).stake(11000);
+      await staking.connect(user1).stake(11000, user1Proof);
       expect(await staking.stakeAmount(user1.address)).to.eq(11000);
-      await staking.connect(user1).stake(5000);
+      await staking.connect(user1).stake(5000, user1Proof);
       expect(await staking.stakeAmount(user1.address)).to.eq(11000 + 5000);
-      await staking.connect(user2).stake(3000);
+      await staking.connect(user2).stake(3000, user2Proof);
       expect(await staking.stakeAmount(user2.address)).to.eq(3000);
+    });
+
+    it("Should not stake with incorrect proof", async function () {
+      await expect(staking.connect(user1).stake(11000, user2Proof)).to.revertedWith(
+        "Not whitelisted"
+      );
+    });
+
+    it("Should not stake if caller not in white list", async function () {
+      await expect(staking.connect(user5).stake(11000, user2Proof)).to.revertedWith(
+        "Not whitelisted"
+      );
     });
   });
 
   describe("Unstake", function () {
     it("Should not unstake before lock time is up", async function () {
-      await staking.connect(user3).stake(800);
+      await staking.connect(user3).stake(800, user3Proof);
       await expect(staking.connect(user3).unstake()).to.be.revertedWith("Time lock");
     });
 
     it("Should not unstake before debate time is up", async function () {
-      await staking.connect(user3).stake(800);
+      await staking.connect(user3).stake(800, user3Proof);
       let timeToLockLp = Number(await staking.timeToLockLp());
       await network.provider.send("evm_increaseTime", [timeToLockLp]);
       await dao.addProposal(staking.address, "0x");
@@ -110,8 +158,8 @@ describe("Staking", function () {
     });
 
     it("Should unstake correctly", async function () {
-      await staking.connect(user1).stake(2800);
-      await staking.connect(user2).stake(1500);
+      await staking.connect(user1).stake(2800, user1Proof);
+      await staking.connect(user2).stake(1500, user2Proof);
       let timeToLockLp = Number(await staking.timeToLockLp());
 
       await network.provider.send("evm_increaseTime", [timeToLockLp]);
@@ -136,7 +184,7 @@ describe("Staking", function () {
     });
 
     it("Should emit Unstaked event", async function () {
-      await staking.connect(user1).stake(2800);
+      await staking.connect(user1).stake(2800, user1Proof);
       let timeToLockLp = Number(await staking.timeToLockLp());
       await network.provider.send("evm_increaseTime", [timeToLockLp]);
       await dao.addProposal(staking.address, "0x");
@@ -151,8 +199,8 @@ describe("Staking", function () {
 
   describe("Claim", function () {
     it("Should update token balances after claim", async function () {
-      await staking.connect(user1).stake(100);
-      await staking.connect(user2).stake(100);
+      await staking.connect(user1).stake(100, user1Proof);
+      await staking.connect(user2).stake(100, user2Proof);
 
       await network.provider.send("evm_increaseTime", [7 * 24 * 60 * 60]);
 
@@ -178,7 +226,7 @@ describe("Staking", function () {
     });
 
     it("Should wait at least 1 week to claim", async function () {
-      await staking.connect(user1).stake(100);
+      await staking.connect(user1).stake(100, user1Proof);
 
       await network.provider.send("evm_increaseTime", [1 * 24 * 60 * 60]);
 
@@ -186,9 +234,9 @@ describe("Staking", function () {
     });
 
     it("Should reset time counter after new stake", async function () {
-      await staking.connect(user1).stake(100);
+      await staking.connect(user1).stake(100, user1Proof);
       await network.provider.send("evm_increaseTime", [1 * 24 * 60 * 60]);
-      await staking.connect(user1).stake(100);
+      await staking.connect(user1).stake(100, user1Proof);
       await network.provider.send("evm_increaseTime", [6 * 24 * 60 * 60]);
       await expect(staking.connect(user1).claim()).to.revertedWith("Wait for 1 week");
     });

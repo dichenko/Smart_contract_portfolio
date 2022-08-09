@@ -309,8 +309,8 @@
       ]
     },
     "C:\\Users\\user\\Documents\\GitHub\\Smart_contract_portfolio\\08_ACDM\\contracts\\Staking.sol": {
-      "lastModificationDate": 1659450109887,
-      "contentHash": "9bf25555efa165d973661c3469149630",
+      "lastModificationDate": 1660036277660,
+      "contentHash": "85a5b732cf6f45ccab33124391b87811",
       "sourceName": "contracts/Staking.sol",
       "solcConfig": {
         "version": "0.8.15",
@@ -339,7 +339,8 @@
       },
       "imports": [
         "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "@openzeppelin/contracts/access/AccessControl.sol"
+        "@openzeppelin/contracts/access/AccessControl.sol",
+        "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol"
       ],
       "versionPragmas": [
         "0.8.15"
@@ -384,6 +385,43 @@
       ],
       "artifacts": [
         "IERC20"
+      ]
+    },
+    "C:\\Users\\user\\Documents\\GitHub\\Smart_contract_portfolio\\08_ACDM\\node_modules\\@openzeppelin\\contracts\\utils\\cryptography\\MerkleProof.sol": {
+      "lastModificationDate": 1659244556029,
+      "contentHash": "04d20a7656ab3b219a40d6dad3669ab5",
+      "sourceName": "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol",
+      "solcConfig": {
+        "version": "0.8.15",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "MerkleProof"
       ]
     },
     "C:\\Users\\user\\Documents\\GitHub\\Smart_contract_portfolio\\08_ACDM\\contracts\\DAO.sol": {

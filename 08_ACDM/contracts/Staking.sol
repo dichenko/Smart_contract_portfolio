@@ -3,6 +3,7 @@ pragma solidity 0.8.15;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
 interface IDao {
     function unlockTime(address) external returns (uint);
@@ -19,7 +20,7 @@ contract Staking is AccessControl {
         uint amount;
         uint lastWithdrawTime;
     }
-
+    bytes32 public merkleRoot;
     mapping(address => Stake) public stakes;
 
     uint public stakingValue;
@@ -33,9 +34,15 @@ contract Staking is AccessControl {
     IDao dao;
     address public daoAddress;
 
-    constructor(address _lpAddress, address _rewardAddress) {
-        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+    modifier onlyWhitelisted (bytes32[] calldata merkleProof) {
+        bytes32 leaf = keccak256(abi.encodePacked(msg.sender));
+        require (MerkleProof.verify(merkleProof, merkleRoot, leaf ), "Not whitelisted");
+        _;
+    }
 
+    constructor(address _lpAddress, address _rewardAddress, bytes32  _merkleRoot) {
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        merkleRoot = _merkleRoot;
         lpToken = IERC20(_lpAddress);
         rewardToken = IERC20(_rewardAddress);
     }
@@ -51,7 +58,7 @@ contract Staking is AccessControl {
     ///@notice Transfers LP-tokens from caller balance to staking contract balance
     ///@param _amount of LP-tokens
     ///@custom:event Emits Stake event
-    function stake(uint256 _amount) public {
+    function stake(uint256 _amount, bytes32[] calldata merkleProof) public onlyWhitelisted (merkleProof) {
         lpToken.transferFrom(msg.sender, address(this), _amount);
         stakes[msg.sender].amount += _amount;
         stakes[msg.sender].timestamp = block.timestamp;
@@ -105,5 +112,10 @@ contract Staking is AccessControl {
     ///@param _owner accounts owner
     function stakeAmount(address _owner) external view returns (uint) {
         return stakes[_owner].amount;
+    }
+    
+    ///@notice Sets new merkle root (only DAO)
+    function setMerkleRoot(bytes32 _newRoot) external onlyRole(DAO){
+        merkleRoot = _newRoot;
     }
 }

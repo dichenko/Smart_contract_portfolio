@@ -28,12 +28,14 @@ interface StakingInterface extends ethers.utils.Interface {
     "getRoleAdmin(bytes32)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
+    "merkleRoot()": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "rewardPercent()": FunctionFragment;
+    "setMerkleRoot(bytes32)": FunctionFragment;
     "setTimeToLockLp(uint256)": FunctionFragment;
     "setupDao(address)": FunctionFragment;
-    "stake(uint256)": FunctionFragment;
+    "stake(uint256,bytes32[])": FunctionFragment;
     "stakeAmount(address)": FunctionFragment;
     "stakes(address)": FunctionFragment;
     "stakingValue()": FunctionFragment;
@@ -65,6 +67,10 @@ interface StakingInterface extends ethers.utils.Interface {
     values: [BytesLike, string]
   ): string;
   encodeFunctionData(
+    functionFragment: "merkleRoot",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "renounceRole",
     values: [BytesLike, string]
   ): string;
@@ -77,11 +83,18 @@ interface StakingInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "setMerkleRoot",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setTimeToLockLp",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "setupDao", values: [string]): string;
-  encodeFunctionData(functionFragment: "stake", values: [BigNumberish]): string;
+  encodeFunctionData(
+    functionFragment: "stake",
+    values: [BigNumberish, BytesLike[]]
+  ): string;
   encodeFunctionData(functionFragment: "stakeAmount", values: [string]): string;
   encodeFunctionData(functionFragment: "stakes", values: [string]): string;
   encodeFunctionData(
@@ -111,6 +124,7 @@ interface StakingInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "merkleRoot", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceRole",
     data: BytesLike
@@ -118,6 +132,10 @@ interface StakingInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "rewardPercent",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMerkleRoot",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -252,6 +270,8 @@ export class Staking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    merkleRoot(overrides?: CallOverrides): Promise<[string]>;
+
     renounceRole(
       role: BytesLike,
       account: string,
@@ -266,6 +286,11 @@ export class Staking extends BaseContract {
 
     rewardPercent(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    setMerkleRoot(
+      _newRoot: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     setTimeToLockLp(
       _time: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -278,6 +303,7 @@ export class Staking extends BaseContract {
 
     stake(
       _amount: BigNumberish,
+      merkleProof: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -335,6 +361,8 @@ export class Staking extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  merkleRoot(overrides?: CallOverrides): Promise<string>;
+
   renounceRole(
     role: BytesLike,
     account: string,
@@ -349,6 +377,11 @@ export class Staking extends BaseContract {
 
   rewardPercent(overrides?: CallOverrides): Promise<BigNumber>;
 
+  setMerkleRoot(
+    _newRoot: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   setTimeToLockLp(
     _time: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -361,6 +394,7 @@ export class Staking extends BaseContract {
 
   stake(
     _amount: BigNumberish,
+    merkleProof: BytesLike[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -413,6 +447,8 @@ export class Staking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    merkleRoot(overrides?: CallOverrides): Promise<string>;
+
     renounceRole(
       role: BytesLike,
       account: string,
@@ -427,6 +463,11 @@ export class Staking extends BaseContract {
 
     rewardPercent(overrides?: CallOverrides): Promise<BigNumber>;
 
+    setMerkleRoot(
+      _newRoot: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setTimeToLockLp(
       _time: BigNumberish,
       overrides?: CallOverrides
@@ -434,7 +475,11 @@ export class Staking extends BaseContract {
 
     setupDao(_daoAddress: string, overrides?: CallOverrides): Promise<void>;
 
-    stake(_amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
+    stake(
+      _amount: BigNumberish,
+      merkleProof: BytesLike[],
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     stakeAmount(_owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -577,6 +622,8 @@ export class Staking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    merkleRoot(overrides?: CallOverrides): Promise<BigNumber>;
+
     renounceRole(
       role: BytesLike,
       account: string,
@@ -591,6 +638,11 @@ export class Staking extends BaseContract {
 
     rewardPercent(overrides?: CallOverrides): Promise<BigNumber>;
 
+    setMerkleRoot(
+      _newRoot: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     setTimeToLockLp(
       _time: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -603,6 +655,7 @@ export class Staking extends BaseContract {
 
     stake(
       _amount: BigNumberish,
+      merkleProof: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -654,6 +707,8 @@ export class Staking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    merkleRoot(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     renounceRole(
       role: BytesLike,
       account: string,
@@ -668,6 +723,11 @@ export class Staking extends BaseContract {
 
     rewardPercent(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    setMerkleRoot(
+      _newRoot: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     setTimeToLockLp(
       _time: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -680,6 +740,7 @@ export class Staking extends BaseContract {
 
     stake(
       _amount: BigNumberish,
+      merkleProof: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
