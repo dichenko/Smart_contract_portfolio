@@ -9,7 +9,8 @@ contract ACDMToken is ERC20, AccessControl, ERC20Burnable {
     bytes32 public constant MINTER_BURNER = keccak256("MINTER_BURNER");
 
     constructor() ERC20("ACADM Coin", "ACDM") {
-        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _setRoleAdmin(MINTER_BURNER, DEFAULT_ADMIN_ROLE);
     }
 
     function decimals() public pure override returns (uint8) {

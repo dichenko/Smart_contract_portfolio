@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "C:\\Users\\user\\Documents\\GitHub\\Smart_contract_portfolio\\08_ACDM\\contracts\\ACDMPlatform.sol": {
-      "lastModificationDate": 1659617057460,
-      "contentHash": "55eb4e68e8cc6b5ee53687dde5f23f76",
+      "lastModificationDate": 1660022186915,
+      "contentHash": "ee5af6d9ee0ba16f8979a63c220fedda",
       "sourceName": "contracts/ACDMPlatform.sol",
       "solcConfig": {
         "version": "0.8.15",
@@ -21,17 +21,12 @@
                 "evm.methodIdentifiers",
                 "metadata",
                 "devdoc",
-                "userdoc",
-                "devdoc",
                 "userdoc"
               ],
               "": [
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -66,17 +61,12 @@
                 "evm.methodIdentifiers",
                 "metadata",
                 "devdoc",
-                "userdoc",
-                "devdoc",
                 "userdoc"
               ],
               "": [
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -113,17 +103,12 @@
                 "evm.methodIdentifiers",
                 "metadata",
                 "devdoc",
-                "userdoc",
-                "devdoc",
                 "userdoc"
               ],
               "": [
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -155,17 +140,12 @@
                 "evm.methodIdentifiers",
                 "metadata",
                 "devdoc",
-                "userdoc",
-                "devdoc",
                 "userdoc"
               ],
               "": [
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -197,17 +177,12 @@
                 "evm.methodIdentifiers",
                 "metadata",
                 "devdoc",
-                "userdoc",
-                "devdoc",
                 "userdoc"
               ],
               "": [
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -239,17 +214,12 @@
                 "evm.methodIdentifiers",
                 "metadata",
                 "devdoc",
-                "userdoc",
-                "devdoc",
                 "userdoc"
               ],
               "": [
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -283,17 +253,12 @@
                 "evm.methodIdentifiers",
                 "metadata",
                 "devdoc",
-                "userdoc",
-                "devdoc",
                 "userdoc"
               ],
               "": [
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -325,17 +290,12 @@
                 "evm.methodIdentifiers",
                 "metadata",
                 "devdoc",
-                "userdoc",
-                "devdoc",
                 "userdoc"
               ],
               "": [
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -371,17 +331,12 @@
                 "evm.methodIdentifiers",
                 "metadata",
                 "devdoc",
-                "userdoc",
-                "devdoc",
                 "userdoc"
               ],
               "": [
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -413,17 +368,12 @@
                 "evm.methodIdentifiers",
                 "metadata",
                 "devdoc",
-                "userdoc",
-                "devdoc",
                 "userdoc"
               ],
               "": [
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -459,17 +409,12 @@
                 "evm.methodIdentifiers",
                 "metadata",
                 "devdoc",
-                "userdoc",
-                "devdoc",
                 "userdoc"
               ],
               "": [
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -503,17 +448,12 @@
                 "evm.methodIdentifiers",
                 "metadata",
                 "devdoc",
-                "userdoc",
-                "devdoc",
                 "userdoc"
               ],
               "": [
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -549,17 +489,12 @@
                 "evm.methodIdentifiers",
                 "metadata",
                 "devdoc",
-                "userdoc",
-                "devdoc",
                 "userdoc"
               ],
               "": [
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -595,17 +530,12 @@
                 "evm.methodIdentifiers",
                 "metadata",
                 "devdoc",
-                "userdoc",
-                "devdoc",
                 "userdoc"
               ],
               "": [
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -639,17 +569,12 @@
                 "evm.methodIdentifiers",
                 "metadata",
                 "devdoc",
-                "userdoc",
-                "devdoc",
                 "userdoc"
               ],
               "": [
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -684,17 +609,12 @@
                 "evm.methodIdentifiers",
                 "metadata",
                 "devdoc",
-                "userdoc",
-                "devdoc",
                 "userdoc"
               ],
               "": [
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -711,8 +631,8 @@
       ]
     },
     "C:\\Users\\user\\Documents\\GitHub\\Smart_contract_portfolio\\08_ACDM\\contracts\\ACDMToken.sol": {
-      "lastModificationDate": 1659457023502,
-      "contentHash": "574ae913dbdf26a7ce82dd81ae455ff8",
+      "lastModificationDate": 1660022029862,
+      "contentHash": "2b76d0610aaeabd4e2d429b7ebce9697",
       "sourceName": "contracts/ACDMToken.sol",
       "solcConfig": {
         "version": "0.8.15",
@@ -730,17 +650,12 @@
                 "evm.methodIdentifiers",
                 "metadata",
                 "devdoc",
-                "userdoc",
-                "devdoc",
                 "userdoc"
               ],
               "": [
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -776,17 +691,12 @@
                 "evm.methodIdentifiers",
                 "metadata",
                 "devdoc",
-                "userdoc",
-                "devdoc",
                 "userdoc"
               ],
               "": [
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },

@@ -33,14 +33,15 @@ contract ACDMPlatform is AccessControl {
     uint public referralRewardBank;
     uint roundDuration = 3 days;
     uint public tradeRoundVolume = 1 ether;
-    uint public lastPrice = 10000000;
-    uint public acdmEmission = 100000;
+    uint public lastPrice = 10_000_000_000_000;
+    uint denominationPrice = 10_000_000;
+    uint public acdmEmission = 100_000;
     uint roundStartTime;
     uint acdmTokenDecimals;
 
     struct Order {
         bool executed;
-        address payable seller;
+        address seller;
         uint amount;
         uint price;
     }
@@ -74,7 +75,7 @@ contract ACDMPlatform is AccessControl {
 
     constructor(address _acdmToken) {
         acdmToken = IACDM_TOKEN(_acdmToken);
-        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         registered[msg.sender] = true;
     }
 
@@ -93,8 +94,8 @@ contract ACDMPlatform is AccessControl {
             roundStartTime + 3 days >= block.timestamp,
             "Sale round time expired"
         );
-        require(msg.value > lastPrice, "Not enough ether to buy token");
-        acdmToken.transfer(msg.sender, msg.value / lastPrice);
+        require(msg.value > denominationPrice, "Not enough ether to buy token");
+        acdmToken.transfer(msg.sender, msg.value / denominationPrice);
         _transferSaleReferReward(msg.sender, msg.value);
     }
 
@@ -103,20 +104,9 @@ contract ACDMPlatform is AccessControl {
             roundStartTime + 3 days <= block.timestamp,
             "Trade round is not over yet"
         );
-        //return acdm tokens to sellers
-        for (uint i = 0; i < orders.length; i++){
-            Order storage order = orders[i];
-            if (!order.executed){
-                acdmToken.transfer(order.seller, order.amount);
-            }
-        }
-
-        //clear array
-        delete orders;
-
         _updateTokenPrice();
 
-        acdmEmission = tradeRoundVolume / lastPrice;
+        acdmEmission = tradeRoundVolume / denominationPrice / 10**acdmToken.decimals();
         acdmToken.mint(acdmEmission * 10**acdmToken.decimals());
         roundStartTime = block.timestamp;
         status = Status.Sale;
@@ -135,22 +125,26 @@ contract ACDMPlatform is AccessControl {
     }
 
     ///@notice Add order during Trade Round
+    ///@param _amount of tokens in denomination
+    ///@param _price of tokens in wei
     function addOrder(uint _amount, uint _price) external onlyTradeRound {
         require(
             roundStartTime + 3 days >= block.timestamp,
             "Trade round time is over"
         );
         acdmToken.transferFrom(msg.sender, address(this), _amount);
-        orders.push(Order(false, payable(msg.sender), _amount, _price));
+        orders.push(Order(false, msg.sender, _amount, _price));
         emit OrderPlaced(orders.length - 1, _amount, _price);
     }
 
     ///@notice redeem order during the Trade Round
     function redeemOrder(uint _id) external payable onlyTradeRound {
+        require(_id< orders.length, "Invalid order id");
         require(
             roundStartTime + 3 days >= block.timestamp,
             "Trade round time is over"
         );
+
         Order storage order = orders[_id];
         require(!order.executed, "Order executed");
         uint amount = msg.value / order.price;
@@ -242,8 +236,8 @@ contract ACDMPlatform is AccessControl {
 
     ///@notice Change token price every saleRound
     function _updateTokenPrice() private {
-        lastPrice = (lastPrice * 103) / 100 ;
-        //@FIX
+        lastPrice = (lastPrice * 103) / 100 + 4_000_000_000_000;
+        denominationPrice = lastPrice / 10 ** acdmToken.decimals();
     }
 
     function withdraw() external onlyRole(DEFAULT_ADMIN_ROLE) {

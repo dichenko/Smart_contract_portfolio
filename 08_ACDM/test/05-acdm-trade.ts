@@ -79,10 +79,13 @@ describe("ACDM Platform - Trade round", function () {
     await acdmPlatform.connect(user2).buyAcdm({ value: ethers.utils.parseEther("0.3") });
     await acdmPlatform.connect(user3).buyAcdm({ value: ethers.utils.parseEther("0.4") });
 
+    //let balance = Number(await acdmToken.balanceOf(user1.address));
+    //console.log("user1 balance: ", balance)
+
     //approve tokens to platform
-    await acdmToken.connect(user1).approve(acdmPlatform.address, ethers.utils.parseEther("0.3"));
-    await acdmToken.connect(user2).approve(acdmPlatform.address, ethers.utils.parseEther("0.3"));
-    await acdmToken.connect(user3).approve(acdmPlatform.address, ethers.utils.parseEther("0.4"));
+    await acdmToken.connect(user1).approve(acdmPlatform.address, 100000*10**6);
+    await acdmToken.connect(user2).approve(acdmPlatform.address, 100000*10**6);
+    await acdmToken.connect(user3).approve(acdmPlatform.address, 100000*10**6);
     //start trade round
     await acdmPlatform.startTradeRound();
   });
@@ -238,14 +241,14 @@ describe("ACDM Platform - Trade round", function () {
       let lastprice = Number(await acdmPlatform.lastPrice());
 
       await acdmPlatform.startSaleRound();
-      expect(await acdmPlatform.lastPrice()).to.eq((lastprice * 103) / 100);
+      expect(await acdmPlatform.lastPrice()).to.eq((lastprice * 103) / 100 + 4_000_000_000_000);
     });
 
     it("Should calculate emission correctly", async function () {
-      await acdmPlatform.connect(user1).addOrder(5, 20000000);
-      await acdmPlatform.connect(user2).addOrder(5, 20000000);
-      await acdmPlatform.connect(user3).redeemOrder(0, { value: 5 * 20000000 });
-      await acdmPlatform.connect(user3).redeemOrder(1, { value: 5 * 20000000 });
+      await acdmPlatform.connect(user1).addOrder(30000*10**6, ethers.utils.parseEther("0.5"));
+      
+      await acdmPlatform.connect(user3).redeemOrder(0, { value: ethers.utils.parseEther("0.5")});
+     
 
       let roundDuration = 3 * 24 * 60 * 60;
       await network.provider.send("evm_increaseTime", [roundDuration + 1]);
@@ -254,8 +257,8 @@ describe("ACDM Platform - Trade round", function () {
       
       let lastprice = Number(await acdmPlatform.lastPrice());
       
-      let tradingVolume = 5 * 20000000 + 5 * 20000000;
-      let emission = Math.round(tradingVolume / lastprice);
+      let tradingVolume = 30000*10**6;
+      let emission = Math.round(tradingVolume / (lastprice/10**6));
     
       expect(await acdmPlatform.acdmEmission()).to.eq(emission);
       
