@@ -31,7 +31,6 @@ interface ACDMPlatformInterface extends ethers.utils.Interface {
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
     "lastPrice()": FunctionFragment;
-    "orders(uint256)": FunctionFragment;
     "redeemOrder(uint256)": FunctionFragment;
     "referralRewardBank()": FunctionFragment;
     "refers(address)": FunctionFragment;
@@ -80,10 +79,6 @@ interface ACDMPlatformInterface extends ethers.utils.Interface {
     values: [BytesLike, string]
   ): string;
   encodeFunctionData(functionFragment: "lastPrice", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "orders",
-    values: [BigNumberish]
-  ): string;
   encodeFunctionData(
     functionFragment: "redeemOrder",
     values: [BigNumberish]
@@ -164,7 +159,6 @@ interface ACDMPlatformInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "lastPrice", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "orders", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "redeemOrder",
     data: BytesLike
@@ -225,25 +219,25 @@ interface ACDMPlatformInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
 
   events: {
-    "OrderExecuted(uint256)": EventFragment;
+    "OrderCanceled(uint256)": EventFragment;
     "OrderPlaced(uint256,uint256,uint256)": EventFragment;
-    "OrderRemoved(uint256)": EventFragment;
+    "OrderRedeemed(uint256)": EventFragment;
     "OrderUpdated(uint256,uint256)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "OrderExecuted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OrderCanceled"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OrderPlaced"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OrderRemoved"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OrderRedeemed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OrderUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
 }
 
-export type OrderExecutedEvent = TypedEvent<[BigNumber] & { _id: BigNumber }>;
+export type OrderCanceledEvent = TypedEvent<[BigNumber] & { _id: BigNumber }>;
 
 export type OrderPlacedEvent = TypedEvent<
   [BigNumber, BigNumber, BigNumber] & {
@@ -253,7 +247,7 @@ export type OrderPlacedEvent = TypedEvent<
   }
 >;
 
-export type OrderRemovedEvent = TypedEvent<[BigNumber] & { _id: BigNumber }>;
+export type OrderRedeemedEvent = TypedEvent<[BigNumber] & { _id: BigNumber }>;
 
 export type OrderUpdatedEvent = TypedEvent<
   [BigNumber, BigNumber] & { _id: BigNumber; amount: BigNumber }
@@ -350,18 +344,6 @@ export class ACDMPlatform extends BaseContract {
     ): Promise<[boolean]>;
 
     lastPrice(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    orders(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [boolean, string, BigNumber, BigNumber] & {
-        executed: boolean;
-        seller: string;
-        amount: BigNumber;
-        price: BigNumber;
-      }
-    >;
 
     redeemOrder(
       _id: BigNumberish,
@@ -476,18 +458,6 @@ export class ACDMPlatform extends BaseContract {
 
   lastPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
-  orders(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [boolean, string, BigNumber, BigNumber] & {
-      executed: boolean;
-      seller: string;
-      amount: BigNumber;
-      price: BigNumber;
-    }
-  >;
-
   redeemOrder(
     _id: BigNumberish,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
@@ -599,18 +569,6 @@ export class ACDMPlatform extends BaseContract {
 
     lastPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
-    orders(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [boolean, string, BigNumber, BigNumber] & {
-        executed: boolean;
-        seller: string;
-        amount: BigNumber;
-        price: BigNumber;
-      }
-    >;
-
     redeemOrder(_id: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
     referralRewardBank(overrides?: CallOverrides): Promise<BigNumber>;
@@ -676,11 +634,11 @@ export class ACDMPlatform extends BaseContract {
   };
 
   filters: {
-    "OrderExecuted(uint256)"(
+    "OrderCanceled(uint256)"(
       _id?: null
     ): TypedEventFilter<[BigNumber], { _id: BigNumber }>;
 
-    OrderExecuted(
+    OrderCanceled(
       _id?: null
     ): TypedEventFilter<[BigNumber], { _id: BigNumber }>;
 
@@ -702,11 +660,13 @@ export class ACDMPlatform extends BaseContract {
       { id: BigNumber; amount: BigNumber; price: BigNumber }
     >;
 
-    "OrderRemoved(uint256)"(
+    "OrderRedeemed(uint256)"(
       _id?: null
     ): TypedEventFilter<[BigNumber], { _id: BigNumber }>;
 
-    OrderRemoved(_id?: null): TypedEventFilter<[BigNumber], { _id: BigNumber }>;
+    OrderRedeemed(
+      _id?: null
+    ): TypedEventFilter<[BigNumber], { _id: BigNumber }>;
 
     "OrderUpdated(uint256,uint256)"(
       _id?: null,
@@ -814,8 +774,6 @@ export class ACDMPlatform extends BaseContract {
     ): Promise<BigNumber>;
 
     lastPrice(overrides?: CallOverrides): Promise<BigNumber>;
-
-    orders(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     redeemOrder(
       _id: BigNumberish,
@@ -935,11 +893,6 @@ export class ACDMPlatform extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     lastPrice(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    orders(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     redeemOrder(
       _id: BigNumberish,

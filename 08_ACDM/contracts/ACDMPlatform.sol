@@ -2,6 +2,7 @@
 pragma solidity 0.8.15;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 
 interface IACDM_TOKEN {
     function mint(uint256 _amount) external;
@@ -22,6 +23,9 @@ interface IACDM_TOKEN {
 }
 
 contract ACDMPlatform is AccessControl {
+    using Counters for Counters.Counter;
+    Counters.Counter private _orderIDs;
+
     bytes32 public constant DAO = keccak256("DAO");
 
     bool started;
@@ -33,43 +37,49 @@ contract ACDMPlatform is AccessControl {
     uint public referralRewardBank;
     uint roundDuration = 3 days;
     uint public tradeRoundVolume = 1 ether;
-    uint public lastPrice = 10_000_000_000_000;
-    uint denominationPrice = 10_000_000;
-    uint public acdmEmission = 100_000;
+    uint public lastPrice = 10000000000000;
+    uint denominationPrice = 10000000;
+    uint public acdmEmission = 100000 * 10**6;
     uint roundStartTime;
     uint acdmTokenDecimals;
 
+    enum OrderStatus {
+        Placed,
+        Redeemed,
+        Canceled
+    }
+
     struct Order {
-        bool executed;
+        OrderStatus status;
         address seller;
         uint amount;
         uint price;
     }
 
-    Order[] public orders;
+    mapping(uint => Order) orders;
 
     event OrderPlaced(uint id, uint amount, uint price);
-    event OrderExecuted(uint _id);
+    event OrderRedeemed(uint _id);
     event OrderUpdated(uint _id, uint amount);
-    event OrderRemoved(uint _id);
+    event OrderCanceled(uint _id);
 
-    enum Status {
+    enum PlatformStatus {
         Pending,
         Sale,
         Trade
     }
 
-    Status public status;
+    PlatformStatus public status;
 
     mapping(address => address) public refers;
     mapping(address => bool) public registered;
 
     modifier onlySaleRound() {
-        require(status == Status.Sale, "Not sale round");
+        require(status == PlatformStatus.Sale, "Not sale round");
         _;
     }
     modifier onlyTradeRound() {
-        require(status == Status.Trade, "Not trade round");
+        require(status == PlatformStatus.Trade, "Not trade round");
         _;
     }
 
@@ -81,11 +91,11 @@ contract ACDMPlatform is AccessControl {
 
     ///@notice Start platform and first sale round
     function startPlatform() external onlyRole(DEFAULT_ADMIN_ROLE) {
-        require(status == Status.Pending, "Already started");
+        require(status == PlatformStatus.Pending, "Already started");
 
         roundStartTime = block.timestamp;
-        acdmToken.mint(acdmEmission * 10**acdmToken.decimals());
-        status = Status.Sale;
+        acdmToken.mint(acdmEmission);
+        status = PlatformStatus.Sale;
     }
 
     ///@notice Buy acdm token with ETH during Sale round
@@ -106,10 +116,10 @@ contract ACDMPlatform is AccessControl {
         );
         _updateTokenPrice();
 
-        acdmEmission = tradeRoundVolume / denominationPrice / 10**acdmToken.decimals();
-        acdmToken.mint(acdmEmission * 10**acdmToken.decimals());
+        acdmEmission = tradeRoundVolume / denominationPrice;
+        acdmToken.mint(acdmEmission);
         roundStartTime = block.timestamp;
-        status = Status.Sale;
+        status = PlatformStatus.Sale;
     }
 
     ///@notice Starts trade round if sale round time expired or sold out
@@ -121,39 +131,44 @@ contract ACDMPlatform is AccessControl {
         );
         tradeRoundVolume = 0;
         roundStartTime = block.timestamp;
-        status = Status.Trade;
+        status = PlatformStatus.Trade;
     }
 
     ///@notice Add order during Trade Round
     ///@param _amount of tokens in denomination
-    ///@param _price of tokens in wei
+    ///@param _price of all tokens in wei
     function addOrder(uint _amount, uint _price) external onlyTradeRound {
         require(
             roundStartTime + 3 days >= block.timestamp,
             "Trade round time is over"
         );
         acdmToken.transferFrom(msg.sender, address(this), _amount);
-        orders.push(Order(false, msg.sender, _amount, _price));
-        emit OrderPlaced(orders.length - 1, _amount, _price);
+        uint id = _orderIDs.current();
+        orders[id] = (Order(OrderStatus.Placed, msg.sender, _amount, _price));
+        emit OrderPlaced(id, _amount, _price);
+        _orderIDs.increment();
     }
 
     ///@notice redeem order during the Trade Round
     function redeemOrder(uint _id) external payable onlyTradeRound {
-        require(_id< orders.length, "Invalid order id");
+        require(_id <= _orderIDs.current(), "Invalid order id");
         require(
             roundStartTime + 3 days >= block.timestamp,
             "Trade round time is over"
         );
 
         Order storage order = orders[_id];
-        require(!order.executed, "Order executed");
-        uint amount = msg.value / order.price;
-        require(order.amount >= amount, "Not enough tokens");
+        require(order.status == OrderStatus.Placed, "Order executed");
+        require(msg.value <= order.price, "Not enough tokens");
+        
+        uint priceForDenomination = order.price / order.amount;
+        uint amount = msg.value / priceForDenomination;
+        
         acdmToken.transfer(msg.sender, amount);
         order.amount -= amount;
         if (order.amount == 0) {
-            order.executed = true;
-            emit OrderExecuted(_id);
+            order.status = OrderStatus.Redeemed;
+            emit OrderRedeemed(_id);
         } else {
             emit OrderUpdated(_id, order.amount);
         }
@@ -166,15 +181,16 @@ contract ACDMPlatform is AccessControl {
 
     ///@notice remove caller's order
     function removeOrder(uint _id) external onlyTradeRound {
+        require(_id <= _orderIDs.current(), "Invalid order id");
         require(
             roundStartTime + 3 days >= block.timestamp,
             "Trade round time is over"
         );
         Order storage order = orders[_id];
         require(order.seller == msg.sender, "You are not a seller");
-        order.executed = true;
+        order.status = OrderStatus.Canceled;
         acdmToken.transfer(msg.sender, order.amount);
-        emit OrderRemoved(_id);
+        emit OrderCanceled(_id);
     }
 
     ///@notice User registration
@@ -237,7 +253,7 @@ contract ACDMPlatform is AccessControl {
     ///@notice Change token price every saleRound
     function _updateTokenPrice() private {
         lastPrice = (lastPrice * 103) / 100 + 4_000_000_000_000;
-        denominationPrice = lastPrice / 10 ** acdmToken.decimals();
+        denominationPrice = lastPrice / 10**acdmToken.decimals();
     }
 
     function withdraw() external onlyRole(DEFAULT_ADMIN_ROLE) {

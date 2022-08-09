@@ -1,8 +1,8 @@
 [
   "constructor(address)",
-  "event OrderExecuted(uint256)",
+  "event OrderCanceled(uint256)",
   "event OrderPlaced(uint256,uint256,uint256)",
-  "event OrderRemoved(uint256)",
+  "event OrderRedeemed(uint256)",
   "event OrderUpdated(uint256,uint256)",
   "event RoleAdminChanged(bytes32 indexed,bytes32 indexed,bytes32 indexed)",
   "event RoleGranted(bytes32 indexed,address indexed,address indexed)",
@@ -16,7 +16,6 @@
   "function grantRole(bytes32,address)",
   "function hasRole(bytes32,address) view returns (bool)",
   "function lastPrice() view returns (uint256)",
-  "function orders(uint256) view returns (bool, address, uint256, uint256)",
   "function redeemOrder(uint256) payable",
   "function referralRewardBank() view returns (uint256)",
   "function refers(address) view returns (address)",
