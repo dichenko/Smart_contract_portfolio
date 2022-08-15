@@ -6,17 +6,14 @@ import "@nomiclabs/hardhat-waffle";
 import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
-import "hardhat-abi-exporter"
+import "hardhat-abi-exporter";
 import "@nomiclabs/hardhat-etherscan";
-import 'hardhat-docgen';
+import "hardhat-docgen";
 
 //import './tasks/add-proposal.ts';
 
-
-
-
 const config: HardhatUserConfig = {
-  solidity: {compilers: [{version: "0.8.15"}]},
+  solidity: { compilers: [{ version: "0.8.15" }] },
 
   abiExporter: {
     path: "./abis",
@@ -25,20 +22,24 @@ const config: HardhatUserConfig = {
     flat: true,
     only: [],
     spacing: 2,
-    pretty: true,
- 
+    pretty: false,
   },
   // docgen: {
   //   path: './docs',
   //   clear: true,
   //   runOnCompile: true,
   // },
- 
+
   networks: {
     goerli: {
       url: process.env.STAGING_ALCHEMY_KEY || "",
-      accounts:
-        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+      accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+    },
+    hardhat: {
+      forking: {
+        url: process.env.ALCHEMY_MAINNET_KEY || "",
+        blockNumber: 15312421,
+      },
     },
   },
   gasReporter: {

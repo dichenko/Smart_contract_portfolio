@@ -19,7 +19,7 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
-interface IACDMTOKENInterface extends ethers.utils.Interface {
+interface IACDMTokenInterface extends ethers.utils.Interface {
   functions: {
     "balanceOf(address)": FunctionFragment;
     "burn(uint256)": FunctionFragment;
@@ -55,7 +55,7 @@ interface IACDMTOKENInterface extends ethers.utils.Interface {
   events: {};
 }
 
-export class IACDMTOKEN extends BaseContract {
+export class IACDMToken extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -96,13 +96,13 @@ export class IACDMTOKEN extends BaseContract {
     toBlock?: string | number | undefined
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
-  interface: IACDMTOKENInterface;
+  interface: IACDMTokenInterface;
 
   functions: {
-    balanceOf(account: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+    balanceOf(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
     burn(
-      _amount: BigNumberish,
+      arg0: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -111,28 +111,28 @@ export class IACDMTOKEN extends BaseContract {
     ): Promise<ContractTransaction>;
 
     mint(
-      _amount: BigNumberish,
+      arg0: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     transfer(
-      to: string,
-      amount: BigNumberish,
+      arg0: string,
+      arg1: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     transferFrom(
-      from: string,
-      to: string,
-      amount: BigNumberish,
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
 
-  balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+  balanceOf(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   burn(
-    _amount: BigNumberish,
+    arg0: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -141,42 +141,42 @@ export class IACDMTOKEN extends BaseContract {
   ): Promise<ContractTransaction>;
 
   mint(
-    _amount: BigNumberish,
+    arg0: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   transfer(
-    to: string,
-    amount: BigNumberish,
+    arg0: string,
+    arg1: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   transferFrom(
-    from: string,
-    to: string,
-    amount: BigNumberish,
+    arg0: string,
+    arg1: string,
+    arg2: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+    balanceOf(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    burn(_amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
+    burn(arg0: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
     decimals(overrides?: CallOverrides): Promise<number>;
 
-    mint(_amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
+    mint(arg0: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
     transfer(
-      to: string,
-      amount: BigNumberish,
+      arg0: string,
+      arg1: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     transferFrom(
-      from: string,
-      to: string,
-      amount: BigNumberish,
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
   };
@@ -184,10 +184,10 @@ export class IACDMTOKEN extends BaseContract {
   filters: {};
 
   estimateGas: {
-    balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+    balanceOf(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     burn(
-      _amount: BigNumberish,
+      arg0: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -196,32 +196,32 @@ export class IACDMTOKEN extends BaseContract {
     ): Promise<BigNumber>;
 
     mint(
-      _amount: BigNumberish,
+      arg0: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     transfer(
-      to: string,
-      amount: BigNumberish,
+      arg0: string,
+      arg1: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     transferFrom(
-      from: string,
-      to: string,
-      amount: BigNumberish,
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     balanceOf(
-      account: string,
+      arg0: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     burn(
-      _amount: BigNumberish,
+      arg0: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -230,20 +230,20 @@ export class IACDMTOKEN extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     mint(
-      _amount: BigNumberish,
+      arg0: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     transfer(
-      to: string,
-      amount: BigNumberish,
+      arg0: string,
+      arg1: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     transferFrom(
-      from: string,
-      to: string,
-      amount: BigNumberish,
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

@@ -3,33 +3,39 @@ pragma solidity 0.8.15;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 
-interface IACDM_TOKEN {
-    function mint(uint256 _amount) external;
+interface IACDM_token {
+    function balanceOf(address) external view returns (uint256);
 
-    function transfer(address to, uint256 amount) external returns (bool);
-
-    function transferFrom(
-        address from,
-        address to,
-        uint256 amount
-    ) external returns (bool);
-
-    function burn(uint _amount) external;
-
-    function balanceOf(address account) external view returns (uint256);
+    function burn(uint256) external;
 
     function decimals() external returns (uint8);
+
+    function mint(uint256) external;
+
+    function transfer(address, uint256) external returns (bool);
+
+    function transferFrom(
+        address,
+        address,
+        uint256
+    ) external returns (bool);
 }
 
 contract ACDMPlatform is AccessControl {
     using Counters for Counters.Counter;
     Counters.Counter private _orderIDs;
 
+    IUniswapV2Router02 UniswapV2Router02 =
+        IUniswapV2Router02(0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D);
+
     bytes32 public constant DAO = keccak256("DAO");
 
     bool started;
-    IACDM_TOKEN acdmToken;
+    IACDM_token acdmToken;
+    ERC20Burnable xxxToken;
     uint[2] public saleRoundReferRewards = [50, 30];
     uint[2] public tradeRoundReferRewards = [25, 25];
     uint commonSaleRoundReferPercent = 80;
@@ -83,8 +89,9 @@ contract ACDMPlatform is AccessControl {
         _;
     }
 
-    constructor(address _acdmToken) {
-        acdmToken = IACDM_TOKEN(_acdmToken);
+    constructor(address _acdmToken, address _xxxToken) {
+        acdmToken = IACDM_token(_acdmToken);
+        xxxToken = ERC20Burnable(_xxxToken);
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         registered[msg.sender] = true;
     }
@@ -160,10 +167,10 @@ contract ACDMPlatform is AccessControl {
         Order storage order = orders[_id];
         require(order.status == OrderStatus.Placed, "Order executed");
         require(msg.value <= order.price, "Not enough tokens");
-        
+
         uint priceForDenomination = order.price / order.amount;
         uint amount = msg.value / priceForDenomination;
-        
+
         acdmToken.transfer(msg.sender, amount);
         order.amount -= amount;
         if (order.amount == 0) {
@@ -256,8 +263,30 @@ contract ACDMPlatform is AccessControl {
         denominationPrice = lastPrice / 10**acdmToken.decimals();
     }
 
-    function withdraw() external onlyRole(DEFAULT_ADMIN_ROLE) {
-        uint balanceToWithdraw = address(this).balance - referralRewardBank;
-        payable(msg.sender).transfer(balanceToWithdraw);
+    function sendComissionToOwner() external onlyRole(DAO) {
+        payable(msg.sender).transfer(referralRewardBank);
+        referralRewardBank = 0;
+    }
+
+    function byXXXtokensAndBurn() external onlyRole(DAO) {
+        
+        address[] memory path = new address[](2);
+        path[0] = UniswapV2Router02.WETH();
+        path[1] = address(xxxToken);
+
+        UniswapV2Router02.swapExactETHForTokens{value: referralRewardBank}(
+            1,
+            path,
+            address(this),
+            block.timestamp + 100
+        );
+        referralRewardBank = 0;
+        uint amountTokens = xxxToken.balanceOf(address(this));
+        xxxToken.burn(amountTokens);
+    }
+
+    function withdraw(address payable _to) external onlyRole(DEFAULT_ADMIN_ROLE){
+        uint _amountToWithdraw = address(this).balance - referralRewardBank;
+        _to.transfer(_amountToWithdraw);
     }
 }

@@ -4,14 +4,14 @@
 
 import { Contract, Signer, utils } from "ethers";
 import { Provider } from "@ethersproject/providers";
-import type { IACDMTOKEN, IACDMTOKENInterface } from "../IACDMTOKEN";
+import type { IACDMToken, IACDMTokenInterface } from "../IACDMToken";
 
 const _abi = [
   {
     inputs: [
       {
         internalType: "address",
-        name: "account",
+        name: "",
         type: "address",
       },
     ],
@@ -30,7 +30,7 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_amount",
+        name: "",
         type: "uint256",
       },
     ],
@@ -56,7 +56,7 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_amount",
+        name: "",
         type: "uint256",
       },
     ],
@@ -69,12 +69,12 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "to",
+        name: "",
         type: "address",
       },
       {
         internalType: "uint256",
-        name: "amount",
+        name: "",
         type: "uint256",
       },
     ],
@@ -93,17 +93,17 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "from",
+        name: "",
         type: "address",
       },
       {
         internalType: "address",
-        name: "to",
+        name: "",
         type: "address",
       },
       {
         internalType: "uint256",
-        name: "amount",
+        name: "",
         type: "uint256",
       },
     ],
@@ -120,15 +120,15 @@ const _abi = [
   },
 ];
 
-export class IACDMTOKEN__factory {
+export class IACDMToken__factory {
   static readonly abi = _abi;
-  static createInterface(): IACDMTOKENInterface {
-    return new utils.Interface(_abi) as IACDMTOKENInterface;
+  static createInterface(): IACDMTokenInterface {
+    return new utils.Interface(_abi) as IACDMTokenInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): IACDMTOKEN {
-    return new Contract(address, _abi, signerOrProvider) as IACDMTOKEN;
+  ): IACDMToken {
+    return new Contract(address, _abi, signerOrProvider) as IACDMToken;
   }
 }

@@ -1,13 +1,13 @@
 {
   "_format": "hh-sol-artifact-1",
-  "contractName": "IACDM_TOKEN",
+  "contractName": "IACDM_token",
   "sourceName": "contracts/ACDMPlatform.sol",
   "abi": [
     {
       "inputs": [
         {
           "internalType": "address",
-          "name": "account",
+          "name": "",
           "type": "address"
         }
       ],
@@ -26,7 +26,7 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_amount",
+          "name": "",
           "type": "uint256"
         }
       ],
@@ -52,7 +52,7 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_amount",
+          "name": "",
           "type": "uint256"
         }
       ],
@@ -65,12 +65,12 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "to",
+          "name": "",
           "type": "address"
         },
         {
           "internalType": "uint256",
-          "name": "amount",
+          "name": "",
           "type": "uint256"
         }
       ],
@@ -89,17 +89,17 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "from",
+          "name": "",
           "type": "address"
         },
         {
           "internalType": "address",
-          "name": "to",
+          "name": "",
           "type": "address"
         },
         {
           "internalType": "uint256",
-          "name": "amount",
+          "name": "",
           "type": "uint256"
         }
       ],

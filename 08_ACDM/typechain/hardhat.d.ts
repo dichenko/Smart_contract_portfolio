@@ -49,13 +49,21 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC165__factory>;
     getContractFactory(
+      name: "IUniswapV2Router01",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IUniswapV2Router01__factory>;
+    getContractFactory(
+      name: "IUniswapV2Router02",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IUniswapV2Router02__factory>;
+    getContractFactory(
       name: "ACDMPlatform",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ACDMPlatform__factory>;
     getContractFactory(
-      name: "IACDMTOKEN",
+      name: "IACDMToken",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IACDMTOKEN__factory>;
+    ): Promise<Contracts.IACDMToken__factory>;
     getContractFactory(
       name: "ACDMToken",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -68,14 +76,6 @@ declare module "hardhat/types/runtime" {
       name: "IStaking",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IStaking__factory>;
-    getContractFactory(
-      name: "IUniswapV2Router01",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IUniswapV2Router01__factory>;
-    getContractFactory(
-      name: "IUniswapV2Router02",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IUniswapV2Router02__factory>;
     getContractFactory(
       name: "LPToken",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -139,15 +139,25 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC165>;
     getContractAt(
+      name: "IUniswapV2Router01",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IUniswapV2Router01>;
+    getContractAt(
+      name: "IUniswapV2Router02",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IUniswapV2Router02>;
+    getContractAt(
       name: "ACDMPlatform",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ACDMPlatform>;
     getContractAt(
-      name: "IACDMTOKEN",
+      name: "IACDMToken",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.IACDMTOKEN>;
+    ): Promise<Contracts.IACDMToken>;
     getContractAt(
       name: "ACDMToken",
       address: string,
@@ -163,16 +173,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IStaking>;
-    getContractAt(
-      name: "IUniswapV2Router01",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IUniswapV2Router01>;
-    getContractAt(
-      name: "IUniswapV2Router02",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IUniswapV2Router02>;
     getContractAt(
       name: "LPToken",
       address: string,

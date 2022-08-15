@@ -9,8 +9,10 @@ interface IDao {
     function unlockTime(address) external returns (uint);
 }
 
+
 contract Staking is AccessControl {
     bytes32 public constant DAO = keccak256("DAO");
+    
 
     uint public rewardPercent = 3;
     uint public timeToLockLp = 5 days;
