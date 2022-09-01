@@ -540,8 +540,8 @@
       ]
     },
     "C:\\Users\\user\\Documents\\GitHub\\Smart_contract_portfolio\\08_ACDM\\contracts\\XXXToken.sol": {
-      "lastModificationDate": 1660194322984,
-      "contentHash": "63e61ad365b32de81a28f2736ea92c4f",
+      "lastModificationDate": 1660549422999,
+      "contentHash": "d13f740bae3183d717ba06ae5ccaf097",
       "sourceName": "contracts/XXXToken.sol",
       "solcConfig": {
         "version": "0.8.15",
@@ -819,6 +819,43 @@
       "artifacts": [
         "DAO",
         "IStaking"
+      ]
+    },
+    "C:\\Users\\user\\Documents\\GitHub\\Smart_contract_portfolio\\08_ACDM\\contracts\\IUniswapV2Factory.sol": {
+      "lastModificationDate": 1659244546983,
+      "contentHash": "ec39b5372f4f4d52101b4da561e2aee6",
+      "sourceName": "contracts/IUniswapV2Factory.sol",
+      "solcConfig": {
+        "version": "0.8.15",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.5.0"
+      ],
+      "artifacts": [
+        "IUniswapV2Factory"
       ]
     }
   }

@@ -2,7 +2,10 @@ import { expect } from "chai";
 import { ethers, network } from "hardhat";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { Contract } from "ethers";
-const uniswapABI = require("../abis/IUniswapV2Router02.json");
+import { pathToFileURL } from "url";
+const uniswapRouterABI = require("../abis/IUniswapV2Router02.json");
+const erc20ABI = require("../abis/ERC20.json");
+const uniswapFactoryABI = require("../abis/IUniswapV2Factory.json");
 
 describe("Full test", function () {
   let dao: Contract;
@@ -18,51 +21,53 @@ describe("Full test", function () {
 
     //deploy xxx token
     const XXXFactory = await ethers.getContractFactory("XXXToken");
-    xxxToken = await XXXFactory.deploy();
+    xxxToken = await XXXFactory.connect(deployer).deploy();
     xxxToken.deployed();
-    xxxToken.mint(deployer.address, ethers.utils.parseEther("100000"));
-
     console.log("xxxToken deployed at: ", xxxToken.address);
-    console.log("---by deployer: ", deployer.address);
-    console.log("---xxxToken total supply: ", Number(await xxxToken.totalSupply()));
 
-    console.log(
-      "---deployer balance of XXXToken = ",
-      Number(await xxxToken.balanceOf(deployer.address))
+    ///attach uniswap router and factory
+    let UniswapV2Router02Address = process.env.UniswapV2Router02_ADDRESS as string;
+    let UniswapV2FactoryAddress = process.env.UniswapV2Factory_ADDRESS as string;
+    const UniswapV2Router02 = new ethers.Contract(
+      UniswapV2Router02Address,
+      uniswapRouterABI,
+      deployer
+    );
+    const UniswapV2Factory = new ethers.Contract(
+      UniswapV2FactoryAddress,
+      uniswapFactoryABI,
+      deployer
     );
 
-    let UniswapV2Router02Address = process.env.UniswapV2Router02 as string;
-    console.log("Uniswap Router addres: ", UniswapV2Router02Address);
-
-    ///attach uniswap router
-    const UniswapV2Router02 = new ethers.Contract(UniswapV2Router02Address, uniswapABI, deployer);
-    
-
-    console.log("Approve XXXtokens to Router...");
+    ///Approve XXXtokens to Router
     await xxxToken
       .connect(deployer)
       .approve(UniswapV2Router02Address, ethers.utils.parseEther("100000"));
-    let alwnc = Number(await xxxToken.allowance(deployer.address, UniswapV2Router02Address));
-    console.log("Allowance: ", alwnc);
+        //wait for 1 day
+   // await network.provider.send("evm_increaseTime", [60 * 60 * 24]);
 
     //get current time
     const blockNum = await ethers.provider.getBlockNumber();
     const block = await ethers.provider.getBlock(blockNum);
     const timestamp = block.timestamp;
+
     ///set options
     const options = { value: ethers.utils.parseEther("1"), gasLimit: 400000 };
 
-    //Add liquidityETH at Uniswap (1ETH + 100000XXXTokens)/////
+    //Add liquidityETH at Uniswap (1ETH + 100000 XXXTokens)/////
     let tx1 = await UniswapV2Router02.connect(deployer).addLiquidityETH(
       xxxToken.address,
       ethers.utils.parseEther("100000"),
-      0,
-      0,
+      ethers.utils.parseEther("100000"),
+      1,
       deployer.address,
-      timestamp + 100,
+      timestamp + 200,
       options
     );
 
-    console.log(tx1);
+    let wethAddress = await UniswapV2Router02.WETH();
+
+    let poolAddress = await UniswapV2Factory.getPair(xxxToken.address, wethAddress);
+    console.log("poolAddress: ", poolAddress);
   });
 });

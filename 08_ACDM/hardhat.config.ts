@@ -22,7 +22,7 @@ const config: HardhatUserConfig = {
     flat: true,
     only: [],
     spacing: 2,
-    pretty: false,
+    pretty: true,
   },
   // docgen: {
   //   path: './docs',
