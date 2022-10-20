@@ -4,13 +4,19 @@
 
 ### Описание ACDMToken
 name = ACADEM Coin
+
 symbol = ACDM
+
 decimals = 6
+
 
 ### Описание XXXToken
 name = XXX Coin
+
 symbol = XXX
+
 decimals = 18
+
 
 XXXToken необходимо залистить на uniswap. Первоначальная цена токена 0,00001 ETH.
 
