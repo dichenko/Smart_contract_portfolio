@@ -1,4 +1,23 @@
 
+## Staking
+Write a staking smart contract, create a liquidity pool on uniswap on the testnet. The staking contract accepts LP tokens, after a certain time (for example 10 minutes) to the user rewards are awarded in the form of reward tokens written in the first week. The number of tokens depends on the amount staked LP tokens (for example, 20 percent). It is also possible to withdraw staked LP tokens after a certain time (eg 20 minutes).
+
+- Create a liquidity pool
+- Implement staking functionality in a smart contract
+- Write full-fledged tests for the contract
+- Write deployment script
+- Deploy to the test network
+- Write tasks for stake, unstake, claim
+- Verify the contract
+
+#Requirements
+
+- The stake(uint256 amount) function - charges the user for the LP staking contract tokens in the amount of the amount, updates the user's balance in the contract
+- The claim() function - withdraws reward tokens available as rewards from the staking contract
+- The unstake() function - writes off tokens available for withdrawal from the LP staking contract
+- Admin functions to change staking parameters (freeze time, percentage)
+
+
 
 ### Задание
 
