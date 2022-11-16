@@ -1,5 +1,5 @@
 
-## Staking
+## Staking (Farming)
 Write a staking smart contract, create a liquidity pool on uniswap on the testnet. The staking contract accepts LP tokens, after a certain time (for example 10 minutes) to the user rewards are awarded in the form of reward tokens written in the first week. The number of tokens depends on the amount staked LP tokens (for example, 20 percent). It is also possible to withdraw staked LP tokens after a certain time (eg 20 minutes).
 
 - Create a liquidity pool

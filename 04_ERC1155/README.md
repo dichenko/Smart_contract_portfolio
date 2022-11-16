@@ -1,3 +1,20 @@
+##Write NFT contracts of ERC-1155, compatible with opensea. You can inherit the pattern from openzeppelin.
+
+- Write an NFT contract
+- Write full-fledged tests for the contract
+- Write deployment script
+- Deploy to the test network
+- Write a task on mint
+- Verify the contract
+- Upload any file to ipfs
+- Insert a link to ipfs into the NFT contract
+
+# Requirements
+
+- All functions provided by ERC-1155 standards
+- All NFT data should be displayed on opensea
+
+
 ### Задание:
 Написать контракты NFT стандартов ERC-1155 совместимые с opensea. Можно наследовать паттерн у openzeppelin. 
 - Написать контракт NFT
